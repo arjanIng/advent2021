@@ -17,7 +17,22 @@ public class Logic {
     public void logic(String inputFile) throws IOException {
         List<String> inputData = Files.lines(Paths.get(inputFile))
                 .collect(Collectors.toList());
-        
+
+        readInput(inputData);
+        runSim();
+        char signala = wires.get("a").getSignal();
+        System.out.printf("Part 1: %d%n", (int) signala);
+
+        readInput(inputData);
+        wires.get("b").input.setSignal(signala);
+        runSim();
+        System.out.printf("Part 2: %d%n", (int) wires.get("a").signal);
+
+    }
+
+    private void readInput(List<String> inputData) {
+        wires.clear();
+        inputs.clear();
         for (String line : inputData) {
             String[] parts = line.split(" -> ");
             String opcode = parts[0];
@@ -66,21 +81,15 @@ public class Logic {
             Component outputWire = getComponent(outputWireName, newComponent, true);
             newComponent.addOutput(outputWire);
         }
+    }
 
-        System.out.printf("Inputs %d%n", inputs.size());
+    private void runSim() {
         for (Component input : inputs) {
-            System.out.printf("***** Propagating %s%n", input);
             history = new HashSet<>();
             input.propagate();
         }
-        
-        for (Wire w : this.wires.values().stream().sorted(Comparator.comparing(a -> a.name)).collect(Collectors.toList())) {
-            System.out.printf("%s: %d%n", w.name, (long) w.signal);
-        }
-//        System.out.printf("Part 1: %d%n", numOn);
-//        System.out.printf("Part 2: %d%n", bright);
     }
-    
+
     private Component getComponent(String name, Component component, boolean input) {
         Component result;
         try {
@@ -111,17 +120,15 @@ public class Logic {
     
     interface Component {
         char getSignal();
+        void setSignal(char signal);
         boolean hasSignal();
         void propagate();
         void addOutput(Component output);
     }
     
-    class Wire implements Component {
-        String name;
-        char signal;
-        Component input;
-        List<Component> outputs = new ArrayList<>();
-        boolean hasSignal;
+    abstract class AbstractComponent implements Component {
+        protected char signal;
+        protected boolean hasSignal;
 
         @Override
         public char getSignal() {
@@ -129,9 +136,20 @@ public class Logic {
         }
 
         @Override
+        public void setSignal(char signal) {
+            this.signal = signal;
+        }
+
+        @Override
         public boolean hasSignal() {
             return hasSignal;
         }
+    }
+    
+    class Wire extends AbstractComponent {
+        String name;
+        Component input;
+        List<Component> outputs = new ArrayList<>();
 
         @Override
         public void propagate() {
@@ -139,7 +157,6 @@ public class Logic {
                 this.signal = input.getSignal();
                 this.hasSignal = true;
                 history.add(this);
-                System.out.printf("In wire %s, signal %d%n", name, (int) signal);
                 for (Component output : outputs) {
                     output.propagate();
                 }
@@ -152,22 +169,11 @@ public class Logic {
         }
     }
     
-    class InSignal implements Component {
-        char signal;
+    class InSignal extends AbstractComponent {
         Component output;
 
-        @Override
-        public char getSignal() {
-            return signal;
-        }
-
-        @Override
-        public boolean hasSignal() {
-            return true;
-        }
-
-        public void setSignal(char signal) {
-            this.signal = signal;
+        public InSignal() {
+            this.hasSignal = true;
         }
 
         @Override
@@ -181,23 +187,11 @@ public class Logic {
         }
     }
     
-    class DualInputGate implements Component {
-        char signal;
+    class DualInputGate extends AbstractComponent {
         Component input1;
         Component input2;
         Component output;
         BiFunction<Character, Character, Character> function;
-        boolean hasSignal;
-
-        @Override
-        public char getSignal() {
-            return signal;
-        }
-
-        @Override
-        public boolean hasSignal() {
-            return hasSignal;
-        }
 
         @Override
         public void propagate() {
@@ -215,22 +209,10 @@ public class Logic {
         }
     }
 
-    class SingleInputGate implements Component {
-        char signal;
+    class SingleInputGate extends AbstractComponent {
         Component input;
         Component output;
         Function<Character, Character> function;
-        boolean hasSignal;
-
-        @Override
-        public char getSignal() {
-            return signal;
-        }
-
-        @Override
-        public boolean hasSignal() {
-            return hasSignal;
-        }
 
         @Override
         public void propagate() {
