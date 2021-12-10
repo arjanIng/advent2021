@@ -12,6 +12,7 @@ public class Logic {
 
     Map<String, Wire> wires = new HashMap<>();
     List<Component> inputs = new ArrayList<>();
+    List<Component> allComponents = new ArrayList<>();
     Set<Component> history;
 
     public void logic(String inputFile) throws IOException {
@@ -20,11 +21,11 @@ public class Logic {
 
         readInput(inputData);
         runSim();
-        char signala = wires.get("a").getSignal();
-        System.out.printf("Part 1: %d%n", (int) signala);
+        char signal = wires.get("a").getSignal();
+        System.out.printf("Part 1: %d%n", (int) signal);
 
-        readInput(inputData);
-        wires.get("b").input.setSignal(signala);
+        allComponents.stream().filter(c -> !(c instanceof InSignal)).forEach(Component::reset);
+        wires.get("b").input.setSignal(signal);
         runSim();
         System.out.printf("Part 2: %d%n", (int) wires.get("a").signal);
 
@@ -66,21 +67,18 @@ public class Logic {
                     newComponent = gate;
                 }
             } else {
-                try {
-                    InSignal inSignal = new InSignal();
-                    inSignal.setSignal((char) Integer.parseInt(iparts[0]));
-                    inputs.add(inSignal);
-                    newComponent = inSignal;
-                } catch (NumberFormatException e) {
-                    // if the parse fails, we are dealing with a wire to wire
-                    Component inputWire = getComponent(iparts[0], null, false);
-                    newComponent = inputWire;
+                Component input = getComponent(iparts[0], null, false);
+                if (input instanceof InSignal) {
+                    inputs.add(input);
                 }
+                newComponent = input;
             }
             
             Component outputWire = getComponent(outputWireName, newComponent, true);
             newComponent.addOutput(outputWire);
+            allComponents.add(newComponent);
         }
+        allComponents.addAll(wires.values());
     }
 
     private void runSim() {
@@ -122,6 +120,7 @@ public class Logic {
         char getSignal();
         void setSignal(char signal);
         boolean hasSignal();
+        void reset();
         void propagate();
         void addOutput(Component output);
     }
@@ -143,6 +142,12 @@ public class Logic {
         @Override
         public boolean hasSignal() {
             return hasSignal;
+        }
+
+        @Override
+        public void reset() {
+            this.signal = (char) 0;
+            this.hasSignal = false;
         }
     }
     
@@ -172,8 +177,9 @@ public class Logic {
     class InSignal extends AbstractComponent {
         Component output;
 
-        public InSignal() {
-            this.hasSignal = true;
+        @Override
+        public boolean hasSignal() {
+            return true;
         }
 
         @Override

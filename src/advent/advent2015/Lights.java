@@ -14,11 +14,6 @@ public class Lights {
                 .collect(Collectors.toList());
 
         int[][] lights = new int[1000][1000];
-        //for (Boolean[] row : lights) Arrays.fill(row, false);
-        //turn on 489,959 through 759,964
-        //turn off 12,823 through 102,934
-        //toggle 756,965 through 812,992
-        
         for (String line : input) {
             String command;
             if (line.startsWith("turn")) {
@@ -26,8 +21,8 @@ public class Lights {
             } else {
                 command = line.split(" ")[0];
             }
-            String opcode = line.substring(command.length() + 1);
-            String coords[] = opcode.split(" through ");
+            String data = line.substring(command.length() + 1);
+            String[] coords = data.split(" through ");
             int[] co1 = Arrays.stream(coords[0].split(",")).mapToInt(Integer::parseInt).toArray();
             int[] co2 = Arrays.stream(coords[1].split(",")).mapToInt(Integer::parseInt).toArray();
             
