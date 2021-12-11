@@ -8,15 +8,6 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class Octopus {
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLACK = "\u001B[30m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_PURPLE = "\u001B[35m";
-    public static final String ANSI_CYAN = "\u001B[36m";
-    public static final String ANSI_WHITE = "\u001B[37m";
 
     private int[][] map;
 
@@ -31,7 +22,6 @@ public class Octopus {
         int totalFlashes = 0;
         int turn = 0;
 
-        printMap(turn, totalFlashes);
         while (++turn != Integer.MAX_VALUE) {
             Stack<Flash> flashes = new Stack<>();
             boolean allzeros = true;
@@ -53,9 +43,10 @@ public class Octopus {
                     }
                 }
             }
+            if (turn == 100) {
+                System.out.printf("Part 1: %d%n", totalFlashes);
+            }
         }
-        printMap(turn, totalFlashes);
-        System.out.printf("Part 1: %d%n", totalFlashes);
         System.out.printf("Part 2: %d%n", turn - 1);
     }
 
@@ -64,21 +55,6 @@ public class Octopus {
             map[r][c] = 0;
             flashes.add(new Flash(r, c));
         }
-    }
-
-    private void printMap(int turn, int flashes) {
-        System.out.printf("turn: %d, flashes: %d%n", turn, flashes);
-        for (int r = 0; r < map.length; r++) {
-            for (int c = 0; c < map.length; c++) {
-                if (map[r][c] == 0) {
-                    System.out.print(ANSI_BLUE + map[r][c] + ANSI_RESET);
-                } else {
-                    System.out.print(map[r][c]);
-                }
-            }
-            System.out.println();
-        }
-        System.out.println();
     }
 
     class Flash {
