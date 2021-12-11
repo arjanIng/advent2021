@@ -21,23 +21,6 @@ public class IntGrid {
         return new IntGrid(grid);
     }
 
-    public IntGrid fromStream(Stream<Pos> stream) {
-        int[][] result = copyOfGrid();
-        stream.forEach(pos -> result[pos.getRow()][pos.getColumn()] = pos.getVal());
-        return new IntGrid(result);
-    }
-
-    public Stream<Pos> stream() {
-        Stream.Builder<Pos> builder = Stream.builder();
-        for (int r = 0; r < grid.length; r++) {
-            for (int c = 0; c < grid[r].length; c++) {
-                Pos p = new Pos(r, c, grid[r][c]);
-                builder.add(p);
-            }
-        }
-        return builder.build();
-    }
-
     public IntGrid forAll(Function<Pos, Integer> function) {
         int[][] result = copyOfGrid();
         for (int r = 0; r < grid.length; r++) {

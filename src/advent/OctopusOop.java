@@ -7,11 +7,8 @@ import java.util.Stack;
 
 public class OctopusOop {
 
-    private IntGrid grid;
-
     public void octopus(String inputFile) throws IOException {
-
-        grid = IntGrid.fromFile(inputFile, line -> line.chars().map(Character::getNumericValue));
+        IntGrid grid = IntGrid.fromFile(inputFile, line -> line.chars().map(Character::getNumericValue));
 
         int totalFlashes = 0;
         int turn = 0;
