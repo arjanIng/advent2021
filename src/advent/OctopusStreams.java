@@ -23,7 +23,7 @@ public class OctopusStreams {
                 IntGrid.Pos flash = flashes.pop();
                 totalFlashes++;
                 grid = grid.stream()
-                        .filter(p -> p.isNeighborOf(flash) && p.getVal() != 0)
+                        .filter(p -> p.isNear(flash, 1) && p.getVal() != 0)
                         .map(p -> p.add(1)).collect(grid.collector());
                 grid = findFlashes(grid, flashes);
             }

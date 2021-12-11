@@ -88,21 +88,12 @@ import java.util.stream.*;
 
             private IntGrid build() {
                 int[][] copyOfGrid = Arrays.stream(grid).map(int[]::clone).toArray(int[][]::new);
-                list.forEach(p -> copyOfGrid[p.getRow()][p.getColumn()] = p.getVal());
+                list.forEach(p -> copyOfGrid[p.row][p.column] = p.getVal());
                 return new IntGrid(copyOfGrid);
             }
         }
 
         public record Pos(int row, int column, int val) {
-
-            public int getRow() {
-                return row;
-            }
-
-            public int getColumn() {
-                return column;
-            }
-
             public int getVal() {
                 return val;
             }
@@ -115,8 +106,8 @@ import java.util.stream.*;
                 return new Pos(row, column, val + add);
             }
 
-            public boolean isNeighborOf(Pos p) {
-                return Math.abs(row - p.row) <= 1 && Math.abs(column - p.column) <= 1;
+            public boolean isNear(Pos p, int distance) {
+                return Math.abs(row - p.row) <= distance && Math.abs(column - p.column) <= distance;
             }
 
             @Override
