@@ -8,7 +8,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 public class IntGrid {
-    private int[][] grid;
+    private final int[][] grid;
 
     private IntGrid(int[][] input) {
         this.grid = input;
@@ -21,26 +21,58 @@ public class IntGrid {
         return new IntGrid(grid);
     }
 
-    public int forAll(Function<Pos, Integer> function) {
+    public IntGrid fromStream(Stream<Pos> stream) {
+        int[][] result = copyOfGrid();
+        stream.forEach(pos -> result[pos.getRow()][pos.getColumn()] = pos.getVal());
+        return new IntGrid(result);
+    }
+
+    public Stream<Pos> stream() {
+        Stream.Builder<Pos> builder = Stream.builder();
+        for (int r = 0; r < grid.length; r++) {
+            for (int c = 0; c < grid[r].length; c++) {
+                Pos p = new Pos(r, c, grid[r][c]);
+                builder.add(p);
+            }
+        }
+        return builder.build();
+    }
+
+    public IntGrid forAll(Function<Pos, Integer> function) {
+        int[][] result = copyOfGrid();
+        for (int r = 0; r < grid.length; r++) {
+            for (int c = 0; c < grid[r].length; c++) {
+                Pos p = new Pos(r, c, grid[r][c]);
+                result[r][c] = function.apply(p);
+            }
+        }
+        return new IntGrid(result);
+    }
+
+    public IntGrid forNeighbors(Pos pos, Function<Pos, Integer> function) {
+        int[][] result = copyOfGrid();
+        for (int r = Math.max(pos.getRow() - 1, 0); r < Math.min(pos.getRow() + 2, grid.length); r++) {
+            for (int c = Math.max(pos.getColumn() - 1, 0); c < Math.min(pos.getColumn() + 2, grid[r].length); c++) {
+                Pos p = new Pos(r, c, grid[r][c]);
+                result[r][c] = function.apply(p);
+            }
+        }
+        return new IntGrid(result);
+    }
+
+    public int inspect(Function<Pos, Integer> function) {
         int result = 0;
         for (int r = 0; r < grid.length; r++) {
             for (int c = 0; c < grid[r].length; c++) {
                 Pos p = new Pos(r, c, grid[r][c]);
                 result += function.apply(p);
-                grid[r][c] = p.getVal();
             }
         }
         return result;
     }
 
-    public void forNeighbors(Pos pos, Consumer<Pos> consumer) {
-        for (int r = Math.max(pos.getRow() - 1, 0); r < Math.min(pos.getRow() + 2, grid.length); r++) {
-            for (int c = Math.max(pos.getColumn() - 1, 0); c < Math.min(pos.getColumn() + 2, grid[r].length); c++) {
-                Pos p = new Pos(r, c, grid[r][c]);
-                consumer.accept(p);
-                grid[r][c] = p.getVal();
-            }
-        }
+    private int[][] copyOfGrid() {
+        return Arrays.stream(grid).map(int[]::clone).toArray(int[][]::new);
     }
 
     public void visualize() {
@@ -56,7 +88,7 @@ public class IntGrid {
     public static class Pos {
         private final int row;
         private final int column;
-        private int val;
+        private final int val;
 
         public int getRow() {
             return row;
@@ -70,8 +102,8 @@ public class IntGrid {
             return val;
         }
 
-        public void setVal(int val) {
-            this.val = val;
+        public Pos newVal(int newVal) {
+            return new Pos(row, column, newVal);
         }
 
         public Pos(int row, int column, int val) {

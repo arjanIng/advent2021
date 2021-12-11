@@ -16,31 +16,33 @@ public class OctopusOop {
         int totalFlashes = 0;
         int turn = 0;
 
+        Stack<IntGrid.Pos> flashes = new Stack<>();
         while (++turn < Integer.MAX_VALUE) {
-            Stack<IntGrid.Pos> flashes = new Stack<>();
-            grid.forAll(pos -> {
-                pos.setVal(pos.getVal() + 1);
-                if (pos.getVal() > 9) {
-                    pos.setVal(0);
+            grid = grid.forAll(pos -> {
+                int val = pos.getVal() + 1;
+                if (val > 9) {
                     flashes.add(pos);
+                    return 0;
                 }
-                return pos.getVal();
+                return val;
             });
             while (flashes.size() > 0) {
                 IntGrid.Pos flashPos = flashes.pop();
                 totalFlashes++;
-                grid.forNeighbors(flashPos, pos -> {
-                    if (pos.getVal() != 0) pos.setVal(pos.getVal() + 1);
-                    if (pos.getVal() > 9) {
-                        pos.setVal(0);
+                grid = grid.forNeighbors(flashPos, pos -> {
+                    int val = pos.getVal();
+                    if (val != 0) val++;
+                    if (val > 9) {
                         flashes.add(pos);
+                        return 0;
                     }
+                    return val;
                 });
             }
             if (turn == 100) {
                 System.out.printf("Part 1: %d%n", totalFlashes);
             }
-            if (grid.forAll(IntGrid.Pos::getVal) == 0) break; // all zeros
+            if (grid.inspect(IntGrid.Pos::getVal) == 0) break; // all zeros
         }
         System.out.printf("Part 2: %d%n", turn);
     }
