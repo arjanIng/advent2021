@@ -30,14 +30,15 @@ public class OctopusStreams {
             if (turn == 100) {
                 System.out.printf("Part 1: %d%n", totalFlashes);
             }
-            if (grid.stream().filter(p -> p.getVal() != 0).findAny().isEmpty()) break; // all zeros
+            if (grid.stream().filter(p -> p.getVal() != 0).findAny().isEmpty()) break;
         }
         System.out.printf("Part 2: %d%n", turn);
     }
 
     private IntGrid findFlashes(IntGrid grid, Stack<IntGrid.Pos> flashes) {
         grid.stream().filter(p -> p.getVal() > 9).forEach(flashes::add);
-        return grid.stream().filter(p -> p.getVal() > 9).map(p -> p.newVal(0)).collect(grid.collector());
+        return grid.stream().filter(p -> p.getVal() > 9)
+                .map(p -> p.newVal(0)).collect(grid.collector());
     }
 
     public static void main(String[] args) throws IOException {
