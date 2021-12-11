@@ -17,7 +17,7 @@ public class LavaStreams {
         List<Integer> sizes = new ArrayList<>();
 
         grid.stream().forEach(pos -> {
-            int lowestNeighbor = grid.stream().filter(n -> n.isNear(pos, 1))
+            int lowestNeighbor = grid.stream().filter(n -> n.isAround(pos, 1))
                     .map(Pos::val).min(Integer::compareTo).orElse(Integer.MAX_VALUE);
             if (pos.val() < lowestNeighbor) {
                 risk.addAndGet(pos.val() + 1);

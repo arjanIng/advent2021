@@ -15,18 +15,18 @@ public class OctopusStreams {
         int totalFlashes = 0;
         int turn = 0;
 
-        Stack<Pos> flashes = new Stack<>();
+        Stack<Pos> flashPositions = new Stack<>();
         while (++turn < Integer.MAX_VALUE) {
             grid = grid.stream().map(p -> p.add(1)).collect(grid.collector());
-            grid = findFlashes(grid, flashes);
+            grid = findFlashes(grid, flashPositions);
 
-            while (!flashes.isEmpty()) {
-                Pos flash = flashes.pop();
+            while (!flashPositions.isEmpty()) {
+                Pos flashPosition = flashPositions.pop();
                 totalFlashes++;
                 grid = grid.stream()
-                        .filter(p -> p.isNear(flash, 1) && p.val() != 0)
+                        .filter(p -> p.isAround(flashPosition, 1) && p.val() != 0)
                         .map(p -> p.add(1)).collect(grid.collector());
-                grid = findFlashes(grid, flashes);
+                grid = findFlashes(grid, flashPositions);
             }
             if (turn == 100) {
                 System.out.printf("Part 1: %d%n", totalFlashes);

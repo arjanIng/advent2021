@@ -11,7 +11,7 @@ public record Pos(int row, int column, int val) {
         return new Pos(row, column, val + add);
     }
 
-    public boolean isNear(Pos p, int distance) {
+    public boolean isAround(Pos p, int distance) {
         return !this.equals(p) && Math.abs(row - p.row) <= distance && Math.abs(column - p.column) <= distance;
     }
 

@@ -27,9 +27,9 @@ import java.util.stream.*;
         }
 
         public IntGrid set(int row, int column, int value) {
-            int[][] copyOfGrid = getCopyOfGrid();
-            copyOfGrid[row][column] = value;
-            return new IntGrid(copyOfGrid);
+            int[][] copy = getCopyOfGrid();
+            copy[row][column] = value;
+            return new IntGrid(copy);
         }
 
         public Stream<Pos> stream() {
@@ -92,9 +92,9 @@ import java.util.stream.*;
             }
 
             private IntGrid build() {
-                int[][] copyOfGrid = getCopyOfGrid();
-                list.forEach(p -> copyOfGrid[p.row()][p.column()] = p.val());
-                return new IntGrid(copyOfGrid);
+                int[][] copy = getCopyOfGrid();
+                list.forEach(p -> copy[p.row()][p.column()] = p.val());
+                return new IntGrid(copy);
             }
         }
 
