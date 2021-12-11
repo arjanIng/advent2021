@@ -21,6 +21,17 @@ import java.util.stream.*;
             return new IntGrid(grid);
         }
 
+        public Pos get(int row, int column) {
+            if (row < 0 || row > grid.length - 1 || column < 0 || column > grid[row].length - 1 ) return null;
+            return new Pos(row, column, grid[row][column]);
+        }
+
+        public IntGrid set(int row, int column, int value) {
+            int[][] copyOfGrid = getCopyOfGrid();
+            copyOfGrid[row][column] = value;
+            return new IntGrid(copyOfGrid);
+        }
+
         public void visualize() {
             for (int r = 0; r < grid.length; r++) {
                 for (int c = 0; c < grid[r].length; c++) {
@@ -40,6 +51,10 @@ import java.util.stream.*;
                 }
             }
             return builder.build();
+        }
+
+        private int[][] getCopyOfGrid() {
+            return Arrays.stream(grid).map(int[]::clone).toArray(int[][]::new);
         }
 
         public Collector<Pos, ?, IntGrid> collector() {
@@ -87,7 +102,7 @@ import java.util.stream.*;
             }
 
             private IntGrid build() {
-                int[][] copyOfGrid = Arrays.stream(grid).map(int[]::clone).toArray(int[][]::new);
+                int[][] copyOfGrid = getCopyOfGrid();
                 list.forEach(p -> copyOfGrid[p.row][p.column] = p.getVal());
                 return new IntGrid(copyOfGrid);
             }
@@ -106,8 +121,18 @@ import java.util.stream.*;
                 return new Pos(row, column, val + add);
             }
 
+            public Pos to(int drow, int dcolumn, IntGrid grid) {
+                return grid.get(row + drow, column + dcolumn);
+            }
+
             public boolean isNear(Pos p, int distance) {
-                return Math.abs(row - p.row) <= distance && Math.abs(column - p.column) <= distance;
+                return !this.equals(p) && Math.abs(row - p.row) <= distance && Math.abs(column - p.column) <= distance;
+            }
+
+            public boolean isAdjacent(Pos p, int distance) {
+                return !this.equals(p) &&
+                        (column == p.column && Math.abs(row - p.row) <= distance) ||
+                        (row == p.row && Math.abs(column - p.column) <= distance);
             }
 
             @Override
@@ -118,5 +143,19 @@ import java.util.stream.*;
                         ", val=" + val +
                         '}';
             }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                Pos pos = (Pos) o;
+                return row == pos.row && column == pos.column && val == pos.val;
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(row, column, val);
+            }
         }
+
     }
