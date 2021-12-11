@@ -21,41 +21,44 @@ public class IntGrid {
         return new IntGrid(grid);
     }
 
-    public IntGrid forAll(Function<Pos, Integer> function) {
-        int[][] result = copyOfGrid();
+    public Stream<Pos> stream() {
+        Stream.Builder<Pos> builder = Stream.builder();
         for (int r = 0; r < grid.length; r++) {
             for (int c = 0; c < grid[r].length; c++) {
                 Pos p = new Pos(r, c, grid[r][c]);
-                result[r][c] = function.apply(p);
+                builder.add(p);
             }
         }
-        return new IntGrid(result);
+        return builder.build();
     }
 
-    public IntGrid forNeighbors(Pos pos, Function<Pos, Integer> function) {
-        int[][] result = copyOfGrid();
-        for (int r = Math.max(pos.getRow() - 1, 0); r < Math.min(pos.getRow() + 2, grid.length); r++) {
-            for (int c = Math.max(pos.getColumn() - 1, 0); c < Math.min(pos.getColumn() + 2, grid[r].length); c++) {
-                Pos p = new Pos(r, c, grid[r][c]);
-                result[r][c] = function.apply(p);
+    public Collector<Pos, ?, IntGrid> collector() {
+        return new Collector<Pos, GridBuilder, IntGrid>() {
+            @Override
+            public Supplier<GridBuilder> supplier() {
+                return GridBuilder::new;
             }
-        }
-        return new IntGrid(result);
-    }
 
-    public int inspect(Function<Pos, Integer> function) {
-        int result = 0;
-        for (int r = 0; r < grid.length; r++) {
-            for (int c = 0; c < grid[r].length; c++) {
-                Pos p = new Pos(r, c, grid[r][c]);
-                result += function.apply(p);
+            @Override
+            public BiConsumer<GridBuilder, Pos> accumulator() {
+                return GridBuilder::add;
             }
-        }
-        return result;
-    }
 
-    private int[][] copyOfGrid() {
-        return Arrays.stream(grid).map(int[]::clone).toArray(int[][]::new);
+            @Override
+            public BinaryOperator<GridBuilder> combiner() {
+                return (left, right) -> { left.addAll(right); return left; };
+            }
+
+            @Override
+            public Function<GridBuilder, IntGrid> finisher() {
+                return GridBuilder::build;
+            }
+
+            @Override
+            public Set<Characteristics> characteristics() {
+                return Collections.emptySet();
+            }
+        };
     }
 
     public void visualize() {
@@ -68,10 +71,29 @@ public class IntGrid {
         System.out.println();
     }
 
-    public static class Pos {
-        private final int row;
-        private final int column;
-        private final int val;
+    private class GridBuilder {
+        List<Pos> list;
+
+        private GridBuilder() {
+            this.list = new ArrayList<>();
+        }
+
+        private void add(Pos pos) {
+            list.add(pos);
+        }
+
+        private void addAll(GridBuilder other) {
+            list.addAll(other.list);
+        }
+
+        private IntGrid build() {
+            int[][] result = Arrays.stream(grid).map(int[]::clone).toArray(int[][]::new);
+            list.forEach(p -> result[p.getRow()][p.getColumn()] = p.getVal());
+            return new IntGrid(result);
+        }
+    }
+
+    public record Pos(int row, int column, int val) {
 
         public int getRow() {
             return row;
@@ -89,10 +111,12 @@ public class IntGrid {
             return new Pos(row, column, newVal);
         }
 
-        public Pos(int row, int column, int val) {
-            this.row = row;
-            this.column = column;
-            this.val = val;
+        public Pos add(int add) {
+            return new Pos(row, column, val + add);
+        }
+
+        public boolean isNeighborOf(Pos p) {
+            return Math.abs(row - p.row) <= 1 && Math.abs(column - p.column) <= 1;
         }
 
         @Override
