@@ -1,6 +1,7 @@
 package advent;
 
 import advent.util.IntGrid;
+import advent.util.Pos;
 
 import java.io.IOException;
 import java.util.*;
@@ -17,10 +18,9 @@ public class LavaStreams {
 
         grid.stream().forEach(pos -> {
             int lowestNeighbor = grid.stream().filter(n -> n.isNear(pos, 1))
-                    .map(IntGrid.Pos::getVal).min(Integer::compareTo).orElse(Integer.MAX_VALUE);
-            if (pos.getVal() < lowestNeighbor) {
-                risk.addAndGet(pos.getVal() + 1);
-                Stack<IntGrid.Pos> toVisit = new Stack<>();
+                    .map(Pos::val).min(Integer::compareTo).orElse(Integer.MAX_VALUE);
+            if (pos.val() < lowestNeighbor) {
+                risk.addAndGet(pos.val() + 1);
                 sizes.add(basinSize(pos, new HashSet<>(), grid));
             }
         });
@@ -31,8 +31,8 @@ public class LavaStreams {
                 sizes.get(0) * sizes.get(1) * sizes.get(2));
     }
 
-    private int basinSize(IntGrid.Pos pos, Set<IntGrid.Pos> visited, IntGrid grid) {
-        if (pos == null || visited.contains(pos) || pos.getVal() == 9) return 0;
+    private int basinSize(Pos pos, Set<Pos> visited, IntGrid grid) {
+        if (pos == null || visited.contains(pos) || pos.val() == 9) return 0;
         visited.add(pos);
         return grid.stream().filter(p -> p.isAdjacent(pos, 1))
                 .map(p -> basinSize(p, visited, grid))

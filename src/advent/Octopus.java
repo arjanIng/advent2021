@@ -57,7 +57,7 @@ public class Octopus {
         }
     }
 
-    class Flash {
+    static class Flash {
         int r;
         int c;
 
