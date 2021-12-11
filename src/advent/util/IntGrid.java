@@ -32,16 +32,6 @@ import java.util.stream.*;
             return new IntGrid(copyOfGrid);
         }
 
-        public void visualize() {
-            for (int r = 0; r < grid.length; r++) {
-                for (int c = 0; c < grid[r].length; c++) {
-                    System.out.print(grid[r][c]);
-                }
-                System.out.println();
-            }
-            System.out.println();
-        }
-
         public Stream<Pos> stream() {
             Stream.Builder<Pos> builder = Stream.builder();
             for (int r = 0; r < grid.length; r++) {
@@ -106,6 +96,18 @@ import java.util.stream.*;
                 list.forEach(p -> copyOfGrid[p.row()][p.column()] = p.val());
                 return new IntGrid(copyOfGrid);
             }
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            for (int r = 0; r < grid.length; r++) {
+                for (int c = 0; c < grid[r].length; c++) {
+                    builder.append(grid[r][c]);
+                }
+                builder.append(System.lineSeparator());
+            }
+            return builder.toString();
         }
 
     }
