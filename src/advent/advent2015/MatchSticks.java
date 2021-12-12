@@ -3,7 +3,6 @@ package advent.advent2015;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +20,6 @@ public class MatchSticks {
 
             boolean esc = false;
             int codelen = strlen - 2; // account for the surrounding double quotes
-            int encodelen;
             for (char c : line.toCharArray()) {
                 if (esc) {
                     switch (c) {

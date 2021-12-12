@@ -45,7 +45,10 @@ public class Strings {
             for (int i = 0; i < line.length() - 2; i++) {
                 if (chars[i] == chars[i + 2]) hasPalindrome = true;
                 for (int j = i + 2; j < line.length() - 1; j++) {
-                    if (chars[j] == chars[i] && chars[j + 1] == chars[i + 1]) hasRepeatingPair = true;
+                    if (chars[j] == chars[i] && chars[j + 1] == chars[i + 1]) {
+                        hasRepeatingPair = true;
+                        break;
+                    }
                 }
             }
             
