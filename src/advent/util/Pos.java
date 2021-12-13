@@ -3,15 +3,26 @@ package advent.util;
 import java.util.Objects;
 
 public class Pos {
-    int row;
-    int column;
-    int val;
-
+    final int row;
+    final int column;
+    final int val;
 
     public Pos(int row, int column, int val) {
         this.row = row;
         this.column = column;
         this.val = val;
+    }
+    
+    public int row() {
+        return row;
+    }
+    
+    public int column() {
+        return column;
+    }
+    
+    public int val() {
+        return val;
     }
 
     public Pos newVal(int newVal) {
@@ -54,7 +65,4 @@ public class Pos {
         return Objects.hash(row, column, val);
     }
 
-    public static <R> R val(Pos pos) {
-        return null;
-    }
 }
