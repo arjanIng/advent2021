@@ -4,34 +4,35 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Graph<T> {
-    private List<Node<T>> nodes;
+    private Map<String, Node<T>> graph;
     
-    public Graph(List<Node<T>> nodes) {
-        this.nodes = nodes;
+    public Graph(Map<String, Node<T>> nodes) {
+        this.graph = nodes;
     }
 
-    public Graph<T> load(String filename, Function<String, Stream<T>> convertLine) throws IOException {
+    public Graph<T> load(String filename, Function<String, Stream<Node<T>>> convertLine) throws IOException {
         List<String> input = Files.lines(Paths.get(filename)).collect(Collectors.toList());
-        //TODO
-//        Object[][] grid = input.stream().map(line -> convertLine.apply(line).toArray())
-//                .toArray(size -> new Object[size][0]);
-        return new Graph(null);
+        Map<String, Node<T>> graph = input.stream().map(line -> convertLine.apply(line).collect(Collectors.toList()))
+                .flatMap(Collection::stream).collect(Collectors.toMap(Node::getId, Function.identity()));
+        return new Graph<T>(graph);
     }
 
     public Stream<Node<T>> stream() {
         Stream.Builder<Node<T>> builder = Stream.builder();
-        for (Node<T> node : nodes) {
+        for (Node<T> node : graph.values()) {
             builder.add(node);
         }
+        return builder.build();
+    }
+
+    public Stream<List<Node<T>>> allPaths(Node<T> from, Node<T> to, Function<Node, Boolean> canVisit) {
+        Stream.Builder<List<Node<T>>> builder = Stream.builder();
         return builder.build();
     }
 
@@ -42,8 +43,8 @@ public class Graph<T> {
         return builder.toString();
     }
 
-    private List<Node<T>> getCopyOfNodes() {
-        return new ArrayList<Node<T>>(nodes);
+    private Map<String, Node<T>> getCopyOfNodes() {
+        return new HashMap<>(graph);
     }
 
     public <E> Collector<E, ?, Graph<T>> collector() {
@@ -69,7 +70,7 @@ public class Graph<T> {
 
             @Override
             public Function<Graph.Builder<T>, Graph<T>> finisher() {
-                return (b) -> b.build(nodes);
+                return (b) -> b.build(graph);
             }
 
             @Override
@@ -77,6 +78,14 @@ public class Graph<T> {
                 return EnumSet.of(Characteristics.CONCURRENT);
             }
         };
+    }
+
+    public Node<T> getOrCreateNode(String id) {
+        if (!graph.containsKey(id)) {
+            Node<T> node = new Node<T>(id);
+            graph.put(id, node);
+        }
+        return graph.get(id);
     }
 
     public static class Builder<E> {
@@ -101,10 +110,10 @@ public class Graph<T> {
             return this;
         }
 
-        public Graph<E> build(List<Node<E>> fromGraph) {
-            List<Node<E>> copy =  new ArrayList(fromGraph);
+        public Graph<E> build(Map<String, Node<E>> fromGraph) {
+            Map<String, Node<E>> copy =  new HashMap<>(fromGraph);
             for (Node<E> node : list) {
-                if (copy.contains(node)) copy.add(copy.indexOf(node), node);
+                if (copy.containsKey(node.getId())) copy.put(node.getId(), node);
             }
             return new Graph(copy);
         }

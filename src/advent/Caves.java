@@ -1,10 +1,14 @@
 package advent;
 
+import advent.util.Graph;
+import advent.util.Node;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Collections.addAll;
 
@@ -15,37 +19,55 @@ public class Caves {
     Map<String, Cave> caves = new HashMap<>();
 
     public void caves(String fileName) throws IOException {
-        List<String> input = Files.lines(Paths.get(fileName)).collect(Collectors.toList());
+        //List<String> input = Files.lines(Paths.get(fileName)).collect(Collectors.toList());
 
-        for (String line : input) {
+        Graph<Integer> graph = new Graph<>(null);
+        Graph<Integer> finalGraph = graph;
+
+        graph = graph.load(fileName, line -> {
             String[] parts = line.split("-");
-            Cave cave1 = findOrCreateCave(parts[0]);
-            Cave cave2 = findOrCreateCave(parts[1]);
-            cave1.connections.add(cave2);
-            cave2.connections.add(cave1);
-        }
+            Node<Integer> cave1 = finalGraph.getOrCreateNode(parts[0]);
+            Node<Integer> cave2 = finalGraph.getOrCreateNode(parts[1]);
+            cave1.addConnection(cave2);
+            cave2.addConnection(cave1);
+            Stream.Builder<Node<Integer>> builder = Stream.builder();
+            builder.add(cave1);
+            builder.add(cave2);
+            return builder.build();
+        });
 
-        Cave start = findOrCreateCave("start");
-        Cave end = findOrCreateCave("end");
+        Node<Integer> start = graph.getOrCreateNode("start");
+        Node<Integer> end = graph.getOrCreateNode("end");
 
-        Set<List<Cave>> routes = new HashSet<>();
-        List<Cave> smallCaves = caves.values().stream().filter(c -> !Character.isUpperCase(c.name.toCharArray()[0]) && !c.equals(start) && !c.equals(end)).collect(Collectors.toList());
-        for (Cave visitTwice : smallCaves) {
-            routes.addAll(traverse(start, end, new ArrayList<>(), new HashSet<>(), visitTwice, 0));
-        }
+//        for (String line : input) {
+//            String[] parts = line.split("-");
+//            Cave cave1 = findOrCreateCave(parts[0]);
+//            Cave cave2 = findOrCreateCave(parts[1]);
+//            cave1.connections.add(cave2);
+//            cave2.connections.add(cave1);
+//        }
 
-        for (List<Cave> route : routes) {
-            for (Cave cave : route) {
-                if (!cave.equals(end)) {
-                    System.out.print(cave.name + " -> ");
-                } else {
-                    System.out.print("end");
-                }
-            }
-            System.out.println();
-        }
+//        Cave start = findOrCreateCave("start");
+//        Cave end = findOrCreateCave("end");
 
-        System.out.printf("Part 1: %d%n", routes.size());
+       Set<List<Cave>> routes = new HashSet<>();
+//        List<Cave> smallCaves = caves.values().stream().filter(c -> !Character.isUpperCase(c.name.toCharArray()[0]) && !c.equals(start) && !c.equals(end)).collect(Collectors.toList());
+//        for (Cave visitTwice : smallCaves) {
+//            routes.addAll(traverse(start, end, new ArrayList<>(), new HashSet<>(), visitTwice, 0));
+//        }
+//
+//        for (List<Cave> route : routes) {
+//            for (Cave cave : route) {
+//                if (!cave.equals(end)) {
+//                    System.out.print(cave.name + " -> ");
+//                } else {
+//                    System.out.print("end");
+//                }
+//            }
+//            System.out.println();
+//        }
+//
+//        System.out.printf("Part 1: %d%n", routes.size());
     }
 
     private Set<List<Cave>> traverse(Cave current, Cave end, List<Cave> route, Set<Cave> visited, Cave visitTwice, int visits) {
