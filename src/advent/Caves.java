@@ -29,7 +29,7 @@ public class Caves {
         Cave end = findOrCreateCave("end");
 
         Set<List<Cave>> routes = new HashSet<>();
-        List<Cave> smallCaves = caves.values().stream().filter(c -> !Character.isUpperCase(c.name.toCharArray()[0]) && !c.equals(start) && !c.equals(end)).toList();
+        List<Cave> smallCaves = caves.values().stream().filter(c -> !Character.isUpperCase(c.name.toCharArray()[0]) && !c.equals(start) && !c.equals(end)).collect(Collectors.toList());
         for (Cave visitTwice : smallCaves) {
             routes.addAll(traverse(start, end, new ArrayList<>(), new HashSet<>(), visitTwice, 0));
         }
@@ -59,7 +59,7 @@ public class Caves {
         if (!Character.isUpperCase(current.name.toCharArray()[0])) {
             newVisited.add(current);
         }
-        for (Cave cave : current.connections.stream().filter(c -> !newVisited.contains(c) || c.equals(visitTwice) && visits < 2).toList()) {
+        for (Cave cave : current.connections.stream().filter(c -> !newVisited.contains(c) || c.equals(visitTwice) && visits < 2).collect(Collectors.toList())) {
             List<Cave> newRoute = new ArrayList<>(route);
             newRoute.add(current);
             if (current.equals(visitTwice)) {

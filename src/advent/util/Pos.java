@@ -2,7 +2,18 @@ package advent.util;
 
 import java.util.Objects;
 
-public record Pos(int row, int column, int val) {
+public class Pos {
+    int row;
+    int column;
+    int val;
+
+
+    public Pos(int row, int column, int val) {
+        this.row = row;
+        this.column = column;
+        this.val = val;
+    }
+
     public Pos newVal(int newVal) {
         return new Pos(row, column, newVal);
     }
@@ -41,5 +52,9 @@ public record Pos(int row, int column, int val) {
     @Override
     public int hashCode() {
         return Objects.hash(row, column, val);
+    }
+
+    public static <R> R val(Pos pos) {
+        return null;
     }
 }
