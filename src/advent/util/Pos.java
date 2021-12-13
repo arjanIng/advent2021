@@ -2,12 +2,12 @@ package advent.util;
 
 import java.util.Objects;
 
-public class Pos {
+public class Pos<T> {
     final int row;
     final int column;
-    final int val;
+    final T val;
 
-    public Pos(int row, int column, int val) {
+    public Pos(int row, int column, T val) {
         this.row = row;
         this.column = column;
         this.val = val;
@@ -21,16 +21,12 @@ public class Pos {
         return column;
     }
     
-    public int val() {
+    public T val() {
         return val;
     }
 
     public Pos newVal(int newVal) {
         return new Pos(row, column, newVal);
-    }
-
-    public Pos add(int add) {
-        return new Pos(row, column, val + add);
     }
 
     public boolean isAround(Pos p, int distance) {
@@ -57,7 +53,7 @@ public class Pos {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Pos pos = (Pos) o;
-        return row == pos.row && column == pos.column && val == pos.val;
+        return row == pos.row && column == pos.column && val.equals(pos.val);
     }
 
     @Override

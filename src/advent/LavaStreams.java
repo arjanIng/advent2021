@@ -1,27 +1,32 @@
 package advent;
 
-import advent.util.IntGrid;
+import advent.util.Grid;
 import advent.util.Pos;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class LavaStreams {
 
     public void lava(String inputFile) throws IOException {
-        IntGrid grid = IntGrid.fromFile(inputFile, line -> line.chars()
-                .map(Character::getNumericValue));
+        Grid<Integer> grid = new Grid<>();
+        grid = grid.load(inputFile, line -> line.chars()
+                .map(Character::getNumericValue).boxed());
 
         AtomicInteger risk = new AtomicInteger();
         List<Integer> sizes = new ArrayList<>();
 
+        Grid<Integer> finalGrid = grid;
         grid.stream().forEach(pos -> {
-            int lowestNeighbor = grid.stream().filter(n -> n.isAround(pos, 1))
+            int lowestNeighbor = finalGrid.stream().filter(n -> n.isAround(pos, 1))
                     .map(Pos::val).min(Integer::compareTo).orElse(Integer.MAX_VALUE);
             if (pos.val() < lowestNeighbor) {
                 risk.addAndGet(pos.val() + 1);
-                sizes.add(basinSize(pos, new HashSet<>(), grid));
+                sizes.add(basinSize(pos, new HashSet<>(), finalGrid));
             }
         });
         sizes.sort(Collections.reverseOrder());
@@ -31,7 +36,7 @@ public class LavaStreams {
                 sizes.get(0) * sizes.get(1) * sizes.get(2));
     }
 
-    private int basinSize(Pos pos, Set<Pos> visited, IntGrid grid) {
+    private int basinSize(Pos<Integer> pos, Set<Pos<Integer>> visited, Grid<Integer> grid) {
         if (pos == null || visited.contains(pos) || pos.val() == 9) return 0;
         visited.add(pos);
         return grid.stream().filter(p -> p.isAdjacent(pos, 1))

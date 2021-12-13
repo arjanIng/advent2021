@@ -1,6 +1,6 @@
 package advent;
 
-import advent.util.IntGrid;
+import advent.util.Grid;
 import advent.util.Pos;
 
 import java.io.IOException;
@@ -9,23 +9,25 @@ import java.util.Stack;
 public class OctopusStreams {
 
     public void octopus(String inputFile) throws IOException {
-        IntGrid grid = IntGrid.fromFile(inputFile, line -> line.chars()
-                .map(Character::getNumericValue));
+        Grid<Integer> grid = new Grid<>();
+        
+        grid = grid.load(inputFile, line -> line.chars()
+                .map(Character::getNumericValue).boxed());
 
         int totalFlashes = 0;
         int turn = 0;
 
-        Stack<Pos> flashPositions = new Stack<>();
+        Stack<Pos<Integer>> flashPositions = new Stack<>();
         while (++turn < Integer.MAX_VALUE) {
-            grid = grid.stream().map(p -> p.add(1)).collect(grid.collector());
+            grid = grid.stream().map(p -> p.newVal(p.val() + 1)).collect(grid.toGrid());
             grid = findFlashes(grid, flashPositions);
 
             while (!flashPositions.isEmpty()) {
-                Pos flashPosition = flashPositions.pop();
+                Pos<Integer> flashPosition = flashPositions.pop();
                 totalFlashes++;
                 grid = grid.stream()
                         .filter(p -> p.isAround(flashPosition, 1) && p.val() != 0)
-                        .map(p -> p.add(1)).collect(grid.collector());
+                        .map(p -> p.newVal(p.val() + 1)).collect(grid.toGrid());
                 grid = findFlashes(grid, flashPositions);
             }
             if (turn == 100) {
@@ -36,10 +38,10 @@ public class OctopusStreams {
         System.out.printf("Part 2: %d%n", turn);
     }
 
-    private IntGrid findFlashes(IntGrid grid, Stack<Pos> flashes) {
+    private Grid<Integer> findFlashes(Grid<Integer> grid, Stack<Pos<Integer>> flashes) {
         grid.stream().filter(p -> p.val() > 9).forEach(flashes::add);
         return grid.stream().filter(p -> p.val() > 9)
-                .map(p -> p.newVal(0)).collect(grid.collector());
+                .map(p -> p.newVal(0)).collect(grid.toGrid());
     }
 
     public static void main(String[] args) throws IOException {
