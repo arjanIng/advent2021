@@ -1,6 +1,7 @@
 package advent.util;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -73,7 +74,7 @@ public class Grid<T> {
         return Arrays.stream(grid).map(l -> Arrays.copyOf(l, l.length)).toArray(Object[][]::new);
     }
 
-    public <E> Collector<E, ?, Grid<T>> toGrid() {
+    public <E> Collector<E, ?, Grid<T>> collector() {
         return new Collector<E, Builder<T>, Grid<T>>() {
             @Override
             public Supplier<Builder<T>> supplier() {
@@ -125,20 +126,6 @@ public class Grid<T> {
 
         public Builder<E> addAll(Grid.Builder<E> builder) {
             list.addAll(builder.list);
-            return this;
-        }
-
-        public Builder<E> addAll(Iterable<? extends Pos<E>> elements) {
-            while (elements.iterator().hasNext()) {
-                list.add(elements.iterator().next());
-            }
-            return this;
-        }
-
-        public Builder<E> addAll(Iterator<? extends Pos<E>> elements) {
-            while (elements.hasNext()) {
-                list.add(elements.next());
-            }
             return this;
         }
 
