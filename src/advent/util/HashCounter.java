@@ -1,9 +1,11 @@
 package advent.util;
 
 import java.util.HashMap;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class HashCounter<T> extends HashMap<T, Long> implements Counter<T> {
+public class HashCounter<T extends Comparable<T>> extends HashMap<T, Long> implements Counter<T> {
     public HashCounter() {
         super();
     }
@@ -25,6 +27,12 @@ public class HashCounter<T> extends HashMap<T, Long> implements Counter<T> {
     }
 
     @Override
+    public Long getOrDefault(Object key, Long defaultValue) {
+        Long val = super.getOrDefault(key, defaultValue);
+        return val == null ? 0L : val;
+    }
+
+    @Override
     public Long add(T key, Long value) {
         Long previous = get(key);
         super.put(key, getOrDefault(key, 0L) + value);
@@ -41,4 +49,15 @@ public class HashCounter<T> extends HashMap<T, Long> implements Counter<T> {
         return values().stream().max(Long::compareTo).orElseThrow();
     }
 
+    @Override
+    public Long sum() {
+        return values().stream().reduce((a, b) -> a + b).orElseThrow();
+    }
+
+    @Override
+    public String toString() {
+        return entrySet().stream().sorted(Entry.comparingByKey())
+                .map(e -> e.getKey() + ": " + e.getValue())
+                .collect(Collectors.joining(", "));
+    }
 }

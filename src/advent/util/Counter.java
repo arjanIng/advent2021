@@ -23,6 +23,8 @@ public interface Counter<T> extends Map<T, Long> {
 
     Long max();
 
+    Long sum();
+
     static Collector<Entry<String, Long>, Counter<String>, Counter<String>> collector() {
         return new Collector<>() {
             @Override

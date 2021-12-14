@@ -19,7 +19,7 @@ public class Caves {
     Map<String, Cave> caves = new HashMap<>();
 
     public void caves(String fileName) throws IOException {
-        //List<String> input = Files.lines(Paths.get(fileName)).collect(Collectors.toList());
+        List<String> input = Files.lines(Paths.get(fileName)).collect(Collectors.toList());
 
         Graph<Integer> graph = new Graph<>(null);
         Graph<Integer> finalGraph = graph;
