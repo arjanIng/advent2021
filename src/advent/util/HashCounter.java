@@ -27,12 +27,6 @@ public class HashCounter<T extends Comparable<T>> extends HashMap<T, Long> imple
     }
 
     @Override
-    public Long getOrDefault(Object key, Long defaultValue) {
-        Long val = super.getOrDefault(key, defaultValue);
-        return val == null ? 0L : val;
-    }
-
-    @Override
     public Long add(T key, Long value) {
         Long previous = get(key);
         super.put(key, getOrDefault(key, 0L) + value);
