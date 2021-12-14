@@ -1,62 +1,58 @@
 package advent;
 
+import advent.util.Counter;
+import advent.util.HashCounter;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class Polymer {
 
     public void octopus(String inputFile) throws IOException {
         List<String> input = Files.lines(Paths.get(inputFile)).collect(Collectors.toList());
-        String polymer = input.get(0);
+        String start = input.get(0);
         
-        Map<String, String> translation = new HashMap<>();
-        Map<String, Long> pairs = new HashMap<>();
-        Map<String, Long> finalPairs = pairs;
+        Map<String, String> rules = new HashMap<>();
         input.subList(2, input.size()).forEach(line -> {
             String[] parts = line.split(" -> ");
-            translation.put(parts[0], parts[1]);
-            finalPairs.put(parts[0], 0L);
+            rules.put(parts[0], parts[1]);
         });
-        
-        for (int i = 0; i < polymer.length() - 1; i++) {
-            String pair = polymer.substring(i, i + 2);
-            pairs.put(pair, pairs.get(pair) + 1);
-        }
-        
-        Map<String, Long> counts = new HashMap<>();
 
-        for (String type : translation.values().stream().distinct().collect(Collectors.toList())) {
-            long count = polymer.chars().filter(c -> c == type.charAt(0)).count();
-            counts.put(type, count);
+        Counter<String> pairCounter = new HashCounter<>();
+        for (int i = 0; i < start.length() - 1; i++) {
+            String pair = start.substring(i, i + 2);
+            pairCounter.add(pair, 1L);
         }
         
+        Counter<String> counts = start.chars()
+                .mapToObj(c -> new AbstractMap.SimpleEntry<>("" + c, 1L))
+                .collect(Counter.collector());
+
         for (int turn = 0; turn < 40; turn++) {
-            Map<String, Long> newPairs = new HashMap<>();
-            translation.keySet().forEach(key -> newPairs.put(key, 0L));
-            pairs.forEach((pair, value) -> {
-                if (value > 0) {
-                    String insert = translation.get(pair);
-                    counts.put(insert, counts.get(insert) + value);
-                    String[] addPairs = new String[]{pair.charAt(0) + insert, insert + pair.charAt(1)};
-                    newPairs.put(addPairs[0], value + newPairs.get(addPairs[0]));
-                    newPairs.put(addPairs[1], value + newPairs.get(addPairs[1]));
-                }
-            });
-            pairs = newPairs;
+            pairCounter = pairCounter.stream().map(e -> {
+                Map<String, Long> newVals = new HashMap<>();
+                char[] pair = e.getKey().toCharArray();
+                String c = rules.get(e.getKey());
+                counts.put(c, e.getValue());
+                newVals.put(e.getKey(), 0L);
+                newVals.put(pair[0] + c, e.getValue());
+                newVals.put(c + pair[1], e.getValue());
+                return newVals;
+            }).flatMap(m -> m.entrySet().stream()).collect(Counter.collector());
 
             if (turn == 9) {
-                long lowest = counts.values().stream().min(Comparator.naturalOrder()).orElseThrow();
-                long highest =counts.values().stream().max(Comparator.naturalOrder()).orElseThrow();
-                System.out.printf("Part 1: %d%n", highest - lowest);
+                System.out.printf("Part 1: %d%n", counts.max() - counts.min());
             }
         }
-        long lowest = counts.values().stream().min(Comparator.naturalOrder()).orElseThrow();
-        long highest =counts.values().stream().max(Comparator.naturalOrder()).orElseThrow();
-        
-        System.out.printf("Part 2: %d%n", highest - lowest);
+        System.out.printf("Part 2: %d%n", counts.max() - counts.min());
     }
 
     public static void main(String[] args) throws IOException {
