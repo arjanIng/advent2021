@@ -14,10 +14,11 @@ public class Polymer {
         
         Map<String, String> translation = new HashMap<>();
         Map<String, Long> pairs = new HashMap<>();
+        Map<String, Long> finalPairs = pairs;
         input.subList(2, input.size()).forEach(line -> {
             String[] parts = line.split(" -> ");
             translation.put(parts[0], parts[1]);
-            pairs.put(parts[0], 0L);
+            finalPairs.put(parts[0], 0L);
         });
         
         for (int i = 0; i < polymer.length() - 1; i++) {
@@ -42,10 +43,9 @@ public class Polymer {
                     String[] addPairs = new String[]{pair.charAt(0) + insert, insert + pair.charAt(1)};
                     newPairs.put(addPairs[0], value + newPairs.get(addPairs[0]));
                     newPairs.put(addPairs[1], value + newPairs.get(addPairs[1]));
-                    pairs.put(pair, 0L);
                 }
             });
-            newPairs.forEach(pairs::put);
+            pairs = newPairs;
 
             if (turn == 9) {
                 long lowest = counts.values().stream().min(Comparator.naturalOrder()).orElseThrow();
