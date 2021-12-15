@@ -15,6 +15,14 @@ public class Graph<T> {
     public Graph(Map<String, Node<T>> nodes) {
         this.graph = nodes;
     }
+    
+    public Graph() {
+        this.graph = new HashMap<>();
+    }
+    
+    public void addNode(Node<T> node) {
+        
+    }
 
     public Graph<T> load(String filename, Function<String, Stream<Node<T>>> convertLine) throws IOException {
         List<String> input = Files.lines(Paths.get(filename)).collect(Collectors.toList());
@@ -31,8 +39,11 @@ public class Graph<T> {
         return builder.build();
     }
 
-    public Stream<List<Node<T>>> allPaths(Node<T> from, Node<T> to, Function<Node, Boolean> canVisit) {
+    public Stream<List<Node<T>>> allPaths(Node<T> origin, Node<T> to, Function<Node<T>, Boolean> canVisit) {
         Stream.Builder<List<Node<T>>> builder = Stream.builder();
+        
+        
+        
         return builder.build();
     }
 

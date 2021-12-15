@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class Day15 {
 
-    public void day15(String inputFile) throws IOException {
+    public int day15(String inputFile, int factor) throws IOException {
         List<String> input = Files.lines(Paths.get(inputFile))
                 .collect(Collectors.toList());
 
@@ -17,7 +17,7 @@ public class Day15 {
                 .map(Character::getNumericValue).toArray())
                 .toArray(size -> new int[size][0]);
         
-        int[][] minrisk = new int[risk.length * 5][risk[0].length * 5];
+        int[][] minrisk = new int[risk.length * factor][risk[0].length * factor];
         for (int[] ints : minrisk) {
             Arrays.fill(ints, Integer.MAX_VALUE);
         }
@@ -36,17 +36,17 @@ public class Day15 {
                         int rr = r + neighbor[0];
                         int cc = c + neighbor[1];
                         if (rr >= 0 && rr < minrisk.length && cc >= 0 && cc < minrisk[r].length) {
-                            if (minrisk[rr][cc] > currentRisk + calcRisk(rr, cc, risk)) {
+                            int calcRisk = currentRisk + calcRisk(rr, cc, risk);
+                            if (minrisk[rr][cc] > calcRisk) {
                                 done = false;
-                                minrisk[rr][cc] = currentRisk + calcRisk(rr, cc, risk);
+                                minrisk[rr][cc] = calcRisk;
                             }
                         }
                     }
                 }
             }
         }
-        System.out.printf("Part 1: %d%n", minrisk[risk.length - 1][risk[0].length - 1]);
-        System.out.printf("Part 2: %d%n", minrisk[minrisk.length - 1][minrisk[0].length - 1]);
+        return minrisk[minrisk.length - 1][minrisk[0].length - 1];
     }
     
     public int calcRisk(int r, int c, int[][] risk) {
@@ -54,14 +54,15 @@ public class Day15 {
         int adjRisk = 0;
         if (c >= risk[0].length) adjRisk = calcRisk(r, c - risk[0].length, risk) + 1;
         if (r >= risk.length) adjRisk = calcRisk(r - risk.length, c, risk) + 1;
-        adjRisk = adjRisk % 10;
-        if (adjRisk == 0) adjRisk = 1;
-        return adjRisk;
+        return ((adjRisk - 1) % 9) + 1;
     }
 
     public static void main(String[] args) throws IOException {
         Day15 day15 = new Day15();
-        day15.day15("./data/day15.txt");
+        long start = System.currentTimeMillis();
+        System.out.println("Part 1: " + day15.day15("./data/day15.txt", 1));
+        System.out.println("Part 2: " + day15.day15("./data/day15.txt", 5));
+        System.out.println("Done in " + (System.currentTimeMillis() - start));
     }
 
 }
