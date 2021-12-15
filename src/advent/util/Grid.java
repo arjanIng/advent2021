@@ -26,7 +26,19 @@ public class Grid<T> {
 
     public Pos<T> get(int row, int column) {
         if (row < 0 || row > grid.length - 1 || column < 0 || column > grid[row].length - 1) return null;
-        return new Pos(row, column, grid[row][column]);
+        return new Pos<>(row, column, elementAt(row, column));
+    }
+
+    public Pos<T> get(Pos<T> pos) {
+        return get(pos.row(), pos.column());
+    }
+
+    public int sizeR() {
+        return grid[0].length;
+    }
+    
+    public int sizeC() {
+        return grid.length;
     }
 
     public Grid<T> load(String filename, Function<String, Stream<T>> convertLine) throws IOException {
@@ -39,6 +51,12 @@ public class Grid<T> {
     public Grid<T> set(int row, int column, T value) {
         Object[][] copy = getCopyOfGrid();
         copy[row][column] = value;
+        return new Grid<>(copy);
+    }
+
+    public Grid<T> set(Pos<T> pos) {
+        Object[][] copy = getCopyOfGrid();
+        copy[pos.row][pos.column] = pos.val;
         return new Grid<>(copy);
     }
 
@@ -58,8 +76,9 @@ public class Grid<T> {
         StringBuilder builder = new StringBuilder();
         for (Object[] objects : grid) {
             for (Object object : objects) {
-                builder.append(object);
+                builder.append(object + ",");
             }
+            builder.setLength(builder.length() - 1);
             builder.append(System.lineSeparator());
         }
         return builder.toString();

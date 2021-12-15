@@ -25,8 +25,8 @@ public class Pos<T> {
         return val;
     }
 
-    public Pos newVal(int newVal) {
-        return new Pos(row, column, newVal);
+    public Pos<T> newVal(T newVal) {
+        return new Pos<>(row, column, newVal);
     }
 
     public boolean isAround(Pos p, int distance) {
