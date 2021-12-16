@@ -65,14 +65,12 @@ public class Day16 {
             if (lengthTypeId == 0) {
                 while (length > 0) {
                     int start = pos;
-                    long r = calculate(sbits);
+                    results.add(calculate(sbits));
                     length -= (pos - start);
-                    results.add(r);
                 }
             } else {
                 for (int i = 0; i < length; i++) {
-                    long r = calculate(sbits);
-                    results.add(r);
+                    results.add(calculate(sbits));
                 }
             }
             return results.stream().reduce((a, b) -> operations.get(typeId).apply(a, b)).orElseThrow();
