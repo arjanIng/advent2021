@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 public class Day16 {
 
-    int versionSum = 0;
     List<BiFunction<Long, Long, Long>> operations = new ArrayList<>();
 
     public void day16(String filename) throws IOException {
@@ -21,7 +20,7 @@ public class Day16 {
         operations.add((a, b) -> a * b);
         operations.add((a, b) -> a < b ? a : b);
         operations.add((a, b) -> a > b ? a : b);
-        operations.add((a, b) -> a);
+        operations.add((a, b) -> null);
         operations.add((a, b) -> a > b ? 1L : 0L);
         operations.add((a, b) -> a < b ? 1L : 0L);
         operations.add((a, b) -> a.equals(b) ? 1L : 0L);
@@ -35,14 +34,14 @@ public class Day16 {
             for (int i = 0; i < add; i++) sbuilder.insert(0, "0");
         }
 
-        long[] result = calculate(sbuilder.toString(), 0);
-
+        long result = calculate(sbuilder.toString());
         System.out.printf("Part 1: %d%n", versionSum);
-        System.out.printf("Part 2: %d%n", result[1]);
+        System.out.printf("Part 2: %d%n", result);
     }
 
-    public long[] calculate(String sbits, int start) {
-        int pos = start;
+    int versionSum = 0;
+    int pos = 0;
+    public long calculate(String sbits) {
         int version = Integer.parseInt(sbits.substring(pos, pos + 3), 2);
         int typeId = Integer.parseInt(sbits.substring(pos + 3, pos + 6), 2);
         versionSum += version;
@@ -56,8 +55,7 @@ public class Day16 {
                 data.append(part.substring(1));
                 pos += 5;
             }
-            long idata = Long.parseLong(data.toString(), 2); 
-            return new long[]{pos - start, idata};
+            return Long.parseLong(data.toString(), 2);
         } else {
             int lengthTypeId = Integer.parseInt(sbits.substring(pos, pos + 1), 2);
             int l = lengthTypeId == 0 ? 15 : 11;
@@ -66,16 +64,15 @@ public class Day16 {
             List<Long> results = new ArrayList<>();
             if (lengthTypeId == 0) {
                 while (length > 0) {
-                    long[] r = calculate(sbits, pos);
-                    pos += r[0];
-                    length -= r[0];
-                    results.add(r[1]);
+                    int start = pos;
+                    long r = calculate(sbits);
+                    length -= (pos - start);
+                    results.add(r);
                 }
             } else {
                 for (int i = 0; i < length; i++) {
-                    long[] r = calculate(sbits, pos);
-                    pos += r[0];
-                    results.add(r[1]);
+                    long r = calculate(sbits);
+                    results.add(r);
                 }
             }
             Long result;
@@ -84,7 +81,7 @@ public class Day16 {
             } else {
                 result = operations.get(typeId).apply(results.get(0), results.get(1));
             }
-            return new long[] {pos - start, result};
+            return result;
         }
     }
 
