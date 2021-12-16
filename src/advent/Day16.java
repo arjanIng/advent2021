@@ -40,18 +40,18 @@ public class Day16 {
     }
 
     int versionSum = 0;
-    int pos = 0;
+    int pos = 0; // not thread safe!
     public long calculate(String sbits) {
         int version = Integer.parseInt(sbits.substring(pos, pos + 3), 2);
         int typeId = Integer.parseInt(sbits.substring(pos + 3, pos + 6), 2);
         versionSum += version;
         pos += 6;
         if (typeId == 4) {
-            boolean ending = false;
+            boolean last = false;
             StringBuilder data = new StringBuilder();
-            while (!ending) {
+            while (!last) {
                 String part = sbits.substring(pos, pos + 5);
-                if (part.startsWith("0")) ending = true;
+                if (part.startsWith("0")) last = true;
                 data.append(part.substring(1));
                 pos += 5;
             }
@@ -75,13 +75,7 @@ public class Day16 {
                     results.add(r);
                 }
             }
-            Long result;
-            if (typeId < 4) {
-                result = results.stream().reduce((a, b) -> operations.get(typeId).apply(a, b)).orElseThrow();
-            } else {
-                result = operations.get(typeId).apply(results.get(0), results.get(1));
-            }
-            return result;
+            return results.stream().reduce((a, b) -> operations.get(typeId).apply(a, b)).orElseThrow();
         }
     }
 
