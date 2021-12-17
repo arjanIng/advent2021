@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 public class Day17 {
 
-    public void day17(String filename) throws IOException {
-        String input = Files.lines(Paths.get(filename)).collect(Collectors.toList()).get(0);
+    public void day17(List<String> lines) {
+        String input = lines.get(0);
         
         String[] targetxy = input.split(", ");
         String[] targetxx = targetxy[0].split("=");
@@ -34,9 +34,11 @@ public class Day17 {
                 while (x < targetx2 && y > targety1) {
                     x = x + ivx;
                     y = y + ivy;
-                    if (y > maxHeight) maxHeight = y;
+                    if (y > maxHeight) {
+                        maxHeight = y;
+                    }
                     if (x >= targetx1 && x <= targetx2 && y >= targety1 && y <= targety2) {
-                        hits = hits + 1;
+                        hits++;
                         break;
                     }
                     ivx = ivx - 1; if (ivx < 0) ivx = 0;
@@ -50,7 +52,10 @@ public class Day17 {
 
     public static void main(String[] args) throws IOException {
         Day17 day17 = new Day17();
-        day17.day17("./data/day17.txt");
+        List<String> lines = Files.lines(Paths.get("./data/day17.txt")).collect(Collectors.toList());
+        long start = System.currentTimeMillis();
+        day17.day17(lines);
+        System.out.printf("Done after %d millis%n", System.currentTimeMillis() - start);
     }
 
 }
