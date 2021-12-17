@@ -24,17 +24,9 @@ public class Day17 {
         int targety1 = Integer.parseInt(targety1y2[0]);
         int targety2 = Integer.parseInt(targety1y2[1]);
         
-        // max y velocity is the distance between the ship and the lowest possible value for y in the target area
         int maxvy = -targety1 - 1;
-        // calc highest point with this velocity
         int maxHeight = 0;
-        for (int y = maxvy; y > 0; y--) {
-            maxHeight = maxHeight + y;
-        }
-        System.out.printf("Part 1: %d%n", maxHeight);
-
         int hits = 0;
-        
         for (int vy = targety1; vy <= maxvy; vy++) {
             for (int vx = 1; vx <= targetx2; vx++) {
                 int ivx = vx; int ivy = vy;
@@ -42,6 +34,7 @@ public class Day17 {
                 while (x < targetx2 && y > targety1) {
                     x = x + ivx;
                     y = y + ivy;
+                    if (y > maxHeight) maxHeight = y;
                     if (x >= targetx1 && x <= targetx2 && y >= targety1 && y <= targety2) {
                         hits = hits + 1;
                         break;
@@ -51,6 +44,7 @@ public class Day17 {
                 }
             }
         }
+        System.out.printf("Part 1: %d%n", maxHeight);
         System.out.printf("Part 2: %d%n", hits);
     }
 
