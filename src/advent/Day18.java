@@ -128,8 +128,8 @@ public class Day18 {
         private boolean explode() {
             if (!isDigit()) {
                 if (level() == 4) {
-                    nearestDigit(this.left, -1).ifPresent(sn -> sn.value += left.value);
-                    nearestDigit(this.right, 1).ifPresent(sn -> sn.value += right.value);
+                    nearestDigit(left, -1).ifPresent(sn -> sn.value += left.value);
+                    nearestDigit(right, 1).ifPresent(sn -> sn.value += right.value);
                     left = null; right = null;
                     value = 0;
                     return true;
