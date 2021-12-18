@@ -123,15 +123,14 @@ public class Day18 {
         }
 
         public SnailNumber nearestDigit(SnailNumber number, boolean dirLeft) {
-            List<SnailNumber> allDigits = origin().allDigits();
-            if (!dirLeft) Collections.reverse(allDigits);
-
-            SnailNumber nearestDigit = null;
-            for (SnailNumber current : allDigits) {
-                if (current.equals(number.left) || current.equals(number.right)) break;
-                nearestDigit = current;
+            List<SnailNumber> digits = origin().allDigits();
+            if (dirLeft) {
+                if (digits.indexOf(number.left) == 0)  return null;
+                return digits.get(digits.indexOf(number.left) - 1);
+            } else {
+                if (digits.indexOf(number.right) == digits.size() - 1)  return null;
+                return digits.get(digits.indexOf(number.right) + 1);
             }
-            return nearestDigit;
         }
 
         public boolean explode() {
@@ -167,11 +166,17 @@ public class Day18 {
             }
             return false;
         }
+
+        @Override
+        public String toString() {
+            if (isDigit()) return value.toString();
+            return "[" + left + "," + right + "]";
+        }
     }
 
     public static void main(String[] args) throws IOException {
         Day18 solver = new Day18();
-        List<String> lines = Files.lines(Paths.get("./data/day18.txt")).collect(Collectors.toList());
+        List<String> lines = Files.lines(Paths.get("./data/day18test2.txt")).collect(Collectors.toList());
         long start = System.currentTimeMillis();
         solver.solve(lines);
         System.out.printf("Done after %d millis%n", System.currentTimeMillis() - start);
