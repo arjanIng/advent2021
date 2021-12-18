@@ -20,7 +20,7 @@ public class Day18 {
             combinations.add(sn.clone());
         }
         while (numbers.size() > 1) {
-            numbers.push(new SnailNumber(numbers.pop(), numbers.pop()));
+            numbers.push(numbers.pop().add(numbers.pop()));
         }
         System.out.println("Part 1: " + numbers.peek().magnitude());
 
@@ -28,10 +28,8 @@ public class Day18 {
         for (SnailNumber n1 : combinations) {
             for (SnailNumber n2 : combinations) {
                 if (n1.equals(n2)) continue;
-                SnailNumber added1 = new SnailNumber(n1.clone(), n2.clone());
-                SnailNumber added2 = new SnailNumber(n2.clone(), n1.clone());
-                maxm = Math.max(maxm, added1.magnitude());
-                maxm = Math.max(maxm, added2.magnitude());
+                maxm = Math.max(maxm, n1.clone().add(n2.clone()).magnitude());
+                maxm = Math.max(maxm, n2.clone().add(n1.clone()).magnitude());
             }
         }
         System.out.println("Part 2: " + maxm);
@@ -68,12 +66,17 @@ public class Day18 {
             this.right = right;
             left.parent = this;
             right.parent = this;
-            reduce();
         }
 
         public SnailNumber(Integer value) {
             this.value = value;
             this.parent = null;
+        }
+
+        public SnailNumber add(SnailNumber toAdd) {
+            SnailNumber r = new SnailNumber(this, toAdd);
+            r.reduce();
+            return r;
         }
 
         public void reduce() {
