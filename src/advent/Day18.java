@@ -143,9 +143,8 @@ public class Day18 {
         private boolean split() {
             if (isDigit()) {
                 if (value >= 10) {
-                    int n = value / 2;
-                    left = new SnailNumber(n);
-                    right = new SnailNumber(n + value % 2);
+                    left = new SnailNumber(value / 2);
+                    right = new SnailNumber(value / 2 + value % 2);
                     left.parent = this; right.parent = this;
                     value = null;
                     return true;
