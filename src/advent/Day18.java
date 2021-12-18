@@ -11,10 +11,11 @@ import java.util.stream.Collectors;
 
 public class Day18 {
 
-    public void solve(List<String> lines) {
+    public void solve(List<String> input) {
         Stack<SnailNumber> sums = new Stack<>();
         List<SnailNumber> combinations = new ArrayList<>();
-        for (String line : lines) {
+
+        for (String line : input) {
             SnailNumber sn = parse(line);
             sums.insertElementAt(sn.clone(), 0); // reverse the stack so we pop the top line first
             combinations.add(sn.clone());
