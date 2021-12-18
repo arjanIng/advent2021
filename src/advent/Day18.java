@@ -108,9 +108,7 @@ public class Day18 {
 
         public SnailNumber origin() {
             SnailNumber current = this;
-            while (current.parent != null) {
-                current = current.parent;
-            }
+            while (current.parent != null) current = current.parent;
             return current;
         }
 
