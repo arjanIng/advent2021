@@ -12,51 +12,28 @@ import java.util.stream.Collectors;
 public class Day18 {
 
     public void solve(List<String> lines) {
-        List<SnailNumber> numberList = new ArrayList<>();
         Stack<SnailNumber> numbers = new Stack<>();
+        List<SnailNumber> combinations = new ArrayList<>();
         for (String line : lines) {
-            numbers.add(parse(line));
-            numberList.add(numbers.peek().clone());
+            numbers.insertElementAt(parse(line), 0);
+            combinations.add(numbers.elementAt(0).clone());
         }
-        Collections.reverse(numbers);
-
         while (numbers.size() > 1) {
-            SnailNumber n1 = numbers.pop();
-            SnailNumber n2 = numbers.pop();
-            SnailNumber added = add(n1, n2);
-            numbers.push(added);
+            numbers.push(new SnailNumber(numbers.pop(), numbers.pop()));
         }
         System.out.println("Part 1: " + numbers.peek().magnitude());
-        
+
         int maxm = -1;
-        for (SnailNumber n1 : numberList) {
-            for (SnailNumber n2 : numberList) {
-                if (!n1.equals(n2)) {
-                    maxm = Math.max(maxm, add(n1.clone(), n2.clone()).magnitude());
-                    maxm = Math.max(maxm, add(n2.clone(), n1.clone()).magnitude());
-                }
+        for (SnailNumber n1 : combinations) {
+            for (SnailNumber n2 : combinations) {
+                if (n1.equals(n2)) continue;
+                SnailNumber added1 = new SnailNumber(n1.clone(), n2.clone());
+                SnailNumber added2 = new SnailNumber(n2.clone(), n1.clone());
+                maxm = Math.max(maxm, added1.magnitude());
+                maxm = Math.max(maxm, added2.magnitude());
             }
         }
         System.out.println("Part 2: " + maxm);
-    }
-
-    private SnailNumber add(SnailNumber n1, SnailNumber n2) {
-        SnailNumber added = new SnailNumber(n1, n2);
-        reduce(added);
-        return added;
-    }
-
-    public void reduce(SnailNumber sn) {
-        boolean running = true;
-        while (running) {
-            boolean hasExploded = sn.explode();
-            boolean exploding = hasExploded;
-            while(exploding) {
-                exploding = sn.explode();
-            }
-            boolean hasSplit = sn.split();
-            running = hasExploded || hasSplit;
-        }
     }
 
     public SnailNumber parse(String s) {
@@ -90,11 +67,32 @@ public class Day18 {
             this.right = right;
             left.parent = this;
             right.parent = this;
+            reduce();
         }
 
         public SnailNumber(Integer value) {
             this.value = value;
             this.parent = null;
+        }
+
+        public void reduce() {
+            boolean running = true;
+            while (running) {
+                running = false;
+                while (explode()) {
+                    running = true;
+                }
+                running = running || split();
+            }
+        }
+
+        public SnailNumber clone() {
+            if (isDigit()) return new SnailNumber(value);
+            return new SnailNumber(left.clone(), right.clone());
+        }
+
+        public boolean isDigit() {
+            return value != null;
         }
 
         public int level() {
@@ -103,7 +101,7 @@ public class Day18 {
         }
 
         public int magnitude() {
-            if (value != null) return value;
+            if (isDigit()) return value;
             return 3 * left.magnitude() + 2 * right.magnitude();
         }
 
@@ -116,16 +114,11 @@ public class Day18 {
         }
 
         public List<SnailNumber> flatMap() {
-            if (this.value != null) return List.of(this);
+            if (isDigit()) return List.of(this);
             List<SnailNumber> all = new ArrayList<>();
-            all.addAll(this.left.flatMap());
-            all.addAll(this.right.flatMap());
+            all.addAll(left.flatMap());
+            all.addAll(right.flatMap());
             return all;
-        }
-
-        public SnailNumber clone() {
-            if (value != null) return new SnailNumber(value);
-            return new SnailNumber(left.clone(), right.clone());
         }
 
         public SnailNumber searchDigit(SnailNumber exclude, boolean dirLeft) {
@@ -133,26 +126,24 @@ public class Day18 {
             if (!dirLeft) {
                 Collections.reverse(map);
             }
-            SnailNumber foundDigit = null;
+            SnailNumber closestDigit = null;
             for (SnailNumber current : map) {
                 if (current.equals(exclude.left) || current.equals(exclude.right)) break;
-                if (current.value != null) {
-                    foundDigit = current;
+                if (current.isDigit()) {
+                    closestDigit = current;
                 }
             }
-            return foundDigit;
+            return closestDigit;
         }
 
         public boolean explode() {
-            if (this.left != null && this.right != null) {
+            if (!isDigit()) {
                 if (level() >= 4) {
-                    SnailNumber leftDigit = this.parent.searchDigit(this, true);
-                    SnailNumber rightDigit = this.parent.searchDigit(this, false);
-                    if (leftDigit != null) leftDigit.value = leftDigit.value + this.left.value;
-                    if (rightDigit != null) rightDigit.value = rightDigit.value + this.right.value;
-                    this.left = null;
-                    this.right = null;
-                    this.value = 0;
+                    SnailNumber leftDigit = searchDigit(this, true);
+                    SnailNumber rightDigit = searchDigit(this, false);
+                    if (leftDigit != null) leftDigit.value = leftDigit.value + left.value;
+                    if (rightDigit != null) rightDigit.value = rightDigit.value + right.value;
+                    left = null; right = null; value = 0;
                     return true;
                 } else {
                     if (left.explode()) return true;
@@ -163,27 +154,20 @@ public class Day18 {
         }
 
         public boolean split() {
-            if (left != null && right != null) {
+            if (!isDigit()) {
                 if (left.split()) return true;
                 if (right.split()) return true;
             } else {
                 if (value >= 10) {
-                    int n = this.value / 2;
+                    int n = value / 2;
                     left = new SnailNumber(n);
                     right = new SnailNumber(n + value % 2);
-                    left.parent = this;
-                    right.parent = this;
+                    left.parent = this; right.parent = this;
                     value = null;
                     return true;
                 }
             }
             return false;
-        }
-
-        @Override
-        public String toString() {
-            if (value != null) return value.toString();
-            return "[" + left + "," + right + "]";
         }
     }
 
