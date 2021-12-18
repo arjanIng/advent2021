@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class Day18 {
 
-    public void day17(List<String> lines) {
+    public void solve(List<String> lines) {
         List<SnailNumber> numberList = new ArrayList<>();
         Stack<SnailNumber> numbers = new Stack<>();
         for (String line : lines) {
@@ -191,7 +191,7 @@ public class Day18 {
         Day18 day17 = new Day18();
         List<String> lines = Files.lines(Paths.get("./data/day18.txt")).collect(Collectors.toList());
         long start = System.currentTimeMillis();
-        day17.day17(lines);
+        day17.solve(lines);
         System.out.printf("Done after %d millis%n", System.currentTimeMillis() - start);
     }
 
