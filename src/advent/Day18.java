@@ -85,7 +85,7 @@ public class Day18 {
                 while (explode()) {
                     running = true;
                 }
-                running = running || split();
+                running |= split();
             }
         }
 
@@ -133,12 +133,13 @@ public class Day18 {
 
         public boolean explode() {
             if (!isDigit()) {
-                if (level() >= 4) {
+                if (level() == 4) {
                     SnailNumber nearestLeft = nearestDigit(this, true);
                     SnailNumber nearestRight = nearestDigit(this, false);
                     if (nearestLeft != null) nearestLeft.value += left.value;
                     if (nearestRight != null) nearestRight.value += right.value;
-                    left = null; right = null; value = 0;
+                    left = null; right = null;
+                    value = 0;
                     return true;
                 } else {
                     if (left.explode()) return true;
