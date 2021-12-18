@@ -89,14 +89,7 @@ public class Day18 {
         }
 
         private void reduce() {
-            boolean running = true;
-            while (running) {
-                running = false;
-                while (explode()) {
-                    running = true;
-                }
-                running |= split();
-            }
+            while (explode() || split());
         }
 
         private boolean isDigit() {
