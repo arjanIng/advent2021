@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -73,12 +72,22 @@ public class Day18 {
         }
 
         public SnailNumber add(SnailNumber toAdd) {
-            SnailNumber r = new SnailNumber(this, toAdd);
-            r.reduce();
-            return r;
+            SnailNumber sn = new SnailNumber(this, toAdd);
+            sn.reduce();
+            return sn;
         }
 
-        public void reduce() {
+        public SnailNumber clone() {
+            if (isDigit()) return new SnailNumber(value);
+            return new SnailNumber(left.clone(), right.clone());
+        }
+
+        public int magnitude() {
+            if (isDigit()) return value;
+            return 3 * left.magnitude() + 2 * right.magnitude();
+        }
+
+        private void reduce() {
             boolean running = true;
             while (running) {
                 running = false;
@@ -89,32 +98,22 @@ public class Day18 {
             }
         }
 
-        public boolean isDigit() {
+        private boolean isDigit() {
             return value != null;
         }
 
-        public SnailNumber clone() {
-            if (isDigit()) return new SnailNumber(value);
-            return new SnailNumber(left.clone(), right.clone());
-        }
-
-        public int level() {
+        private int level() {
             if (parent == null) return 0;
             return parent.level() + 1;
         }
 
-        public int magnitude() {
-            if (isDigit()) return value;
-            return 3 * left.magnitude() + 2 * right.magnitude();
-        }
-
-        public SnailNumber origin() {
+        private SnailNumber origin() {
             SnailNumber current = this;
             while (current.parent != null) current = current.parent;
             return current;
         }
 
-        public List<SnailNumber> allDigits() {
+        private List<SnailNumber> allDigits() {
             if (isDigit()) return List.of(this);
             List<SnailNumber> all = new ArrayList<>();
             all.addAll(left.allDigits());
@@ -122,16 +121,16 @@ public class Day18 {
             return all;
         }
 
-        private SnailNumber bounds(List<SnailNumber> list, int i) {
+        private SnailNumber protect(List<SnailNumber> list, int i) {
             return (i < 0 || i >= list.size()) ? null : list.get(i);
         }
 
-        public SnailNumber nearestDigit(SnailNumber number, boolean dirLeft) {
+        private SnailNumber nearestDigit(SnailNumber number, boolean dirLeft) {
             List<SnailNumber> digits = origin().allDigits();
-            return bounds(digits, digits.indexOf(number.left) + (dirLeft ? -1 : 2));
+            return protect(digits, digits.indexOf(number.left) + (dirLeft ? -1 : 2));
         }
 
-        public boolean explode() {
+        private boolean explode() {
             if (!isDigit()) {
                 if (level() == 4) {
                     SnailNumber nearestLeft = nearestDigit(this, true);
@@ -142,14 +141,13 @@ public class Day18 {
                     value = 0;
                     return true;
                 } else {
-                    if (left.explode()) return true;
-                    if (right.explode()) return true;
+                    return left.explode() || right.explode();
                 }
             }
             return false;
         }
 
-        public boolean split() {
+        private boolean split() {
             if (isDigit()) {
                 if (value >= 10) {
                     int n = value / 2;
@@ -160,8 +158,7 @@ public class Day18 {
                     return true;
                 }
             } else {
-                if (left.split()) return true;
-                if (right.split()) return true;
+                return left.split() || right.split();
             }
             return false;
         }
