@@ -16,8 +16,8 @@ public class Day18 {
         List<SnailNumber> combinations = new ArrayList<>();
         for (String line : lines) {
             SnailNumber sn = parse(line);
-            numbers.insertElementAt(sn, 0);
-            combinations.add(sn);
+            numbers.insertElementAt(sn.clone(), 0);
+            combinations.add(sn.clone());
         }
         while (numbers.size() > 1) {
             numbers.push(new SnailNumber(numbers.pop(), numbers.pop()));
