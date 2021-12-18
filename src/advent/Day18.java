@@ -120,9 +120,9 @@ public class Day18 {
             return (i < 0 || i >= list.size()) ? Optional.empty() : Optional.of(list.get(i));
         }
 
-        private Optional<SnailNumber> nearestDigit(SnailNumber number, int next) {
+        private Optional<SnailNumber> nearestDigit(SnailNumber number, int delta) {
             List<SnailNumber> digits = origin().allDigits();
-            return protect(digits, digits.indexOf(number) + next);
+            return protect(digits, digits.indexOf(number) + delta);
         }
 
         private boolean explode() {
