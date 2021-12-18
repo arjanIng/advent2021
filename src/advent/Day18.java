@@ -18,10 +18,11 @@ public class Day18 {
             sums.insertElementAt(sn.clone(), 0);
             combinations.add(sn.clone());
         }
-        while (sums.size() > 1) {
-            sums.push(sums.pop().add(sums.pop()));
+        SnailNumber sum = sums.pop();
+        while (!sums.isEmpty()) {
+            sum = sum.add(sums.pop());
         }
-        System.out.println("Part 1: " + sums.peek().magnitude());
+        System.out.println("Part 1: " + sum.magnitude());
 
         int maxm = -1;
         for (SnailNumber n1 : combinations) {
