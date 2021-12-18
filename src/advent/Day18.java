@@ -42,7 +42,7 @@ public class Day18 {
         }
         int level = 0;
         int splitAt = -1;
-        for (int i = 0; i < s.length(); i++) {
+        for (int i = 0; i < s.length() && splitAt == -1; i++) {
             switch (s.charAt(i)) {
                 case '[' -> level++;
                 case ']' -> level--;
@@ -137,10 +137,10 @@ public class Day18 {
         public boolean explode() {
             if (!isDigit()) {
                 if (level() >= 4) {
-                    SnailNumber leftDigit = nearestDigit(this, true);
-                    SnailNumber rightDigit = nearestDigit(this, false);
-                    if (leftDigit != null) leftDigit.value = leftDigit.value + left.value;
-                    if (rightDigit != null) rightDigit.value = rightDigit.value + right.value;
+                    SnailNumber nearestLeft = nearestDigit(this, true);
+                    SnailNumber nearestRight = nearestDigit(this, false);
+                    if (nearestLeft != null) nearestLeft.value += left.value;
+                    if (nearestRight != null) nearestRight.value += right.value;
                     left = null; right = null; value = 0;
                     return true;
                 } else {
