@@ -41,19 +41,19 @@ public class Day18 {
             return new SnailNumber(Integer.parseInt(s));
         }
         int level = 0;
-        int commaAt = -1;
+        int splitAt = -1;
         for (int i = 0; i < s.length(); i++) {
             switch (s.charAt(i)) {
                 case '[' -> level++;
                 case ']' -> level--;
                 case ',' -> {
                     if (level == 1) {
-                        commaAt = i;
+                        splitAt = i;
                     }
                 }
             }
         }
-        return new SnailNumber(parse(s.substring(1, commaAt)), parse(s.substring(commaAt + 1, s.length() - 1)));
+        return new SnailNumber(parse(s.substring(1, splitAt)), parse(s.substring(splitAt + 1, s.length() - 1)));
     }
 
     static class SnailNumber {
@@ -86,13 +86,13 @@ public class Day18 {
             }
         }
 
+        public boolean isDigit() {
+            return value != null;
+        }
+
         public SnailNumber clone() {
             if (isDigit()) return new SnailNumber(value);
             return new SnailNumber(left.clone(), right.clone());
-        }
-
-        public boolean isDigit() {
-            return value != null;
         }
 
         public int level() {
@@ -121,26 +121,24 @@ public class Day18 {
             return all;
         }
 
-        public SnailNumber searchDigit(SnailNumber exclude, boolean dirLeft) {
+        public SnailNumber nearestDigit(SnailNumber exclude, boolean dirLeft) {
             List<SnailNumber> map = this.origin().flatMap();
             if (!dirLeft) {
                 Collections.reverse(map);
             }
-            SnailNumber closestDigit = null;
+            SnailNumber nearestDigit = null;
             for (SnailNumber current : map) {
                 if (current.equals(exclude.left) || current.equals(exclude.right)) break;
-                if (current.isDigit()) {
-                    closestDigit = current;
-                }
+                nearestDigit = current;
             }
-            return closestDigit;
+            return nearestDigit;
         }
 
         public boolean explode() {
             if (!isDigit()) {
                 if (level() >= 4) {
-                    SnailNumber leftDigit = searchDigit(this, true);
-                    SnailNumber rightDigit = searchDigit(this, false);
+                    SnailNumber leftDigit = nearestDigit(this, true);
+                    SnailNumber rightDigit = nearestDigit(this, false);
                     if (leftDigit != null) leftDigit.value = leftDigit.value + left.value;
                     if (rightDigit != null) rightDigit.value = rightDigit.value + right.value;
                     left = null; right = null; value = 0;
