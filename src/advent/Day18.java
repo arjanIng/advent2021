@@ -12,17 +12,17 @@ import java.util.stream.Collectors;
 public class Day18 {
 
     public void solve(List<String> lines) {
-        Stack<SnailNumber> numbers = new Stack<>();
+        Stack<SnailNumber> sums = new Stack<>();
         List<SnailNumber> combinations = new ArrayList<>();
         for (String line : lines) {
             SnailNumber sn = parse(line);
-            numbers.insertElementAt(sn.clone(), 0);
+            sums.insertElementAt(sn.clone(), 0);
             combinations.add(sn.clone());
         }
-        while (numbers.size() > 1) {
-            numbers.push(numbers.pop().add(numbers.pop()));
+        while (sums.size() > 1) {
+            sums.push(sums.pop().add(sums.pop()));
         }
-        System.out.println("Part 1: " + numbers.peek().magnitude());
+        System.out.println("Part 1: " + sums.peek().magnitude());
 
         int maxm = -1;
         for (SnailNumber n1 : combinations) {
@@ -70,7 +70,6 @@ public class Day18 {
 
         public SnailNumber(Integer value) {
             this.value = value;
-            this.parent = null;
         }
 
         public SnailNumber add(SnailNumber toAdd) {
