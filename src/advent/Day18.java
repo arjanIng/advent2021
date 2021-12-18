@@ -122,15 +122,13 @@ public class Day18 {
             return all;
         }
 
+        private SnailNumber bounds(List<SnailNumber> list, int i) {
+            return (i < 0 || i >= list.size()) ? null : list.get(i);
+        }
+
         public SnailNumber nearestDigit(SnailNumber number, boolean dirLeft) {
             List<SnailNumber> digits = origin().allDigits();
-            if (dirLeft) {
-                if (digits.indexOf(number.left) == 0)  return null;
-                return digits.get(digits.indexOf(number.left) - 1);
-            } else {
-                if (digits.indexOf(number.right) == digits.size() - 1)  return null;
-                return digits.get(digits.indexOf(number.right) + 1);
-            }
+            return bounds(digits, digits.indexOf(number.left) + (dirLeft ? -1 : 2));
         }
 
         public boolean explode() {
@@ -176,7 +174,7 @@ public class Day18 {
 
     public static void main(String[] args) throws IOException {
         Day18 solver = new Day18();
-        List<String> lines = Files.lines(Paths.get("./data/day18test2.txt")).collect(Collectors.toList());
+        List<String> lines = Files.lines(Paths.get("./data/day18.txt")).collect(Collectors.toList());
         long start = System.currentTimeMillis();
         solver.solve(lines);
         System.out.printf("Done after %d millis%n", System.currentTimeMillis() - start);
