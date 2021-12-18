@@ -34,7 +34,7 @@ public class Day18 {
         System.out.println("Part 2: " + maxm);
     }
 
-    public SnailNumber parse(String s) {
+    private SnailNumber parse(String s) {
         if (s.length() == 1) {
             return new SnailNumber(Integer.parseInt(s));
         }
@@ -55,10 +55,10 @@ public class Day18 {
     }
 
     static class SnailNumber {
-        SnailNumber left;
-        SnailNumber right;
-        Integer value;
-        SnailNumber parent;
+        private SnailNumber left;
+        private SnailNumber right;
+        private Integer value;
+        private SnailNumber parent;
 
         public SnailNumber(SnailNumber left, SnailNumber right) {
             this.left = left;
