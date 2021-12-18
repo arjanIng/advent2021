@@ -15,8 +15,9 @@ public class Day18 {
         Stack<SnailNumber> numbers = new Stack<>();
         List<SnailNumber> combinations = new ArrayList<>();
         for (String line : lines) {
-            numbers.insertElementAt(parse(line), 0);
-            combinations.add(numbers.elementAt(0).clone());
+            SnailNumber sn = parse(line);
+            numbers.insertElementAt(sn, 0);
+            combinations.add(sn);
         }
         while (numbers.size() > 1) {
             numbers.push(new SnailNumber(numbers.pop(), numbers.pop()));
@@ -113,22 +114,21 @@ public class Day18 {
             return current;
         }
 
-        public List<SnailNumber> flatMap() {
+        public List<SnailNumber> allDigits() {
             if (isDigit()) return List.of(this);
             List<SnailNumber> all = new ArrayList<>();
-            all.addAll(left.flatMap());
-            all.addAll(right.flatMap());
+            all.addAll(left.allDigits());
+            all.addAll(right.allDigits());
             return all;
         }
 
-        public SnailNumber nearestDigit(SnailNumber exclude, boolean dirLeft) {
-            List<SnailNumber> map = this.origin().flatMap();
-            if (!dirLeft) {
-                Collections.reverse(map);
-            }
+        public SnailNumber nearestDigit(SnailNumber number, boolean dirLeft) {
+            List<SnailNumber> allDigits = origin().allDigits();
+            if (!dirLeft) Collections.reverse(allDigits);
+
             SnailNumber nearestDigit = null;
-            for (SnailNumber current : map) {
-                if (current.equals(exclude.left) || current.equals(exclude.right)) break;
+            for (SnailNumber current : allDigits) {
+                if (current.equals(number.left) || current.equals(number.right)) break;
                 nearestDigit = current;
             }
             return nearestDigit;
@@ -152,10 +152,7 @@ public class Day18 {
         }
 
         public boolean split() {
-            if (!isDigit()) {
-                if (left.split()) return true;
-                if (right.split()) return true;
-            } else {
+            if (isDigit()) {
                 if (value >= 10) {
                     int n = value / 2;
                     left = new SnailNumber(n);
@@ -164,16 +161,19 @@ public class Day18 {
                     value = null;
                     return true;
                 }
+            } else {
+                if (left.split()) return true;
+                if (right.split()) return true;
             }
             return false;
         }
     }
 
     public static void main(String[] args) throws IOException {
-        Day18 day17 = new Day18();
+        Day18 solver = new Day18();
         List<String> lines = Files.lines(Paths.get("./data/day18.txt")).collect(Collectors.toList());
         long start = System.currentTimeMillis();
-        day17.solve(lines);
+        solver.solve(lines);
         System.out.printf("Done after %d millis%n", System.currentTimeMillis() - start);
     }
 
