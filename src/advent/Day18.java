@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
@@ -115,22 +116,20 @@ public class Day18 {
             return all;
         }
 
-        private SnailNumber protect(List<SnailNumber> list, int i) {
-            return (i < 0 || i >= list.size()) ? null : list.get(i);
+        private Optional<SnailNumber> protect(List<SnailNumber> list, int i) {
+            return (i < 0 || i >= list.size()) ? Optional.empty() : Optional.of(list.get(i));
         }
 
-        private SnailNumber nearestDigit(SnailNumber number, boolean dirLeft) {
+        private Optional<SnailNumber> nearestDigit(SnailNumber number, int next) {
             List<SnailNumber> digits = origin().allDigits();
-            return protect(digits, digits.indexOf(number.left) + (dirLeft ? -1 : 2));
+            return protect(digits, digits.indexOf(number) + next);
         }
 
         private boolean explode() {
             if (!isDigit()) {
                 if (level() == 4) {
-                    SnailNumber nearestLeft = nearestDigit(this, true);
-                    SnailNumber nearestRight = nearestDigit(this, false);
-                    if (nearestLeft != null) nearestLeft.value += left.value;
-                    if (nearestRight != null) nearestRight.value += right.value;
+                    nearestDigit(this.left, -1).ifPresent(sn -> sn.value += left.value);
+                    nearestDigit(this.right, 1).ifPresent(sn -> sn.value += right.value);
                     left = null; right = null;
                     value = 0;
                     return true;
