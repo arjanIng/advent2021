@@ -16,7 +16,7 @@ public class Day18 {
         List<SnailNumber> combinations = new ArrayList<>();
         for (String line : lines) {
             SnailNumber sn = parse(line);
-            sums.insertElementAt(sn.clone(), 0);
+            sums.insertElementAt(sn.clone(), 0); // reverse the stack so we pop the top line first
             combinations.add(sn.clone());
         }
         SnailNumber sum = sums.pop();
