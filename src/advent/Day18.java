@@ -37,26 +37,6 @@ public class Day18 {
         System.out.println("Part 2: " + maxm);
     }
 
-    private SnailNumber parse(String s) {
-        if (s.length() == 1) {
-            return new SnailNumber(Integer.parseInt(s));
-        }
-        int level = 0;
-        int splitAt = -1;
-        for (int i = 0; i < s.length() && splitAt == -1; i++) {
-            switch (s.charAt(i)) {
-                case '[' -> level++;
-                case ']' -> level--;
-                case ',' -> {
-                    if (level == 1) {
-                        splitAt = i;
-                    }
-                }
-            }
-        }
-        return new SnailNumber(parse(s.substring(1, splitAt)), parse(s.substring(splitAt + 1, s.length() - 1)));
-    }
-
     static class SnailNumber {
         private SnailNumber left;
         private SnailNumber right;
@@ -161,6 +141,26 @@ public class Day18 {
             if (isDigit()) return value.toString();
             return "[" + left + "," + right + "]";
         }
+    }
+
+    private SnailNumber parse(String s) {
+        if (s.length() == 1) {
+            return new SnailNumber(Integer.parseInt(s));
+        }
+        int level = 0;
+        int splitAt = -1;
+        for (int i = 0; i < s.length() && splitAt == -1; i++) {
+            switch (s.charAt(i)) {
+                case '[' -> level++;
+                case ']' -> level--;
+                case ',' -> {
+                    if (level == 1) {
+                        splitAt = i;
+                    }
+                }
+            }
+        }
+        return new SnailNumber(parse(s.substring(1, splitAt)), parse(s.substring(splitAt + 1, s.length() - 1)));
     }
 
     public static void main(String[] args) throws IOException {
