@@ -17,8 +17,8 @@ public class Day18 {
 
         for (String line : input) {
             SnailNumber sn = parse(line);
-            sums.insertElementAt(sn.clone(), 0); // reverse the stack so we pop the top line first
-            combinations.add(sn.clone());
+            sums.insertElementAt(sn, 0); // reverse the stack so we pop the top line first
+            combinations.add(sn);
         }
         SnailNumber sum = sums.pop();
         while (!sums.isEmpty()) {
@@ -30,8 +30,8 @@ public class Day18 {
         for (SnailNumber n1 : combinations) {
             for (SnailNumber n2 : combinations) {
                 if (n1.equals(n2)) continue;
-                maxm = Math.max(maxm, n1.clone().add(n2.clone()).magnitude());
-                maxm = Math.max(maxm, n2.clone().add(n1.clone()).magnitude());
+                maxm = Math.max(maxm, n1.add(n2).magnitude());
+                maxm = Math.max(maxm, n2.add(n1).magnitude());
             }
         }
         System.out.println("Part 2: " + maxm);
@@ -55,19 +55,19 @@ public class Day18 {
         }
 
         public SnailNumber add(SnailNumber toAdd) {
-            SnailNumber sn = new SnailNumber(this, toAdd);
+            SnailNumber sn = new SnailNumber(this.clone(), toAdd.clone());
             sn.reduce();
             return sn;
-        }
-
-        public SnailNumber clone() {
-            if (isDigit()) return new SnailNumber(value);
-            return new SnailNumber(left.clone(), right.clone());
         }
 
         public int magnitude() {
             if (isDigit()) return value;
             return 3 * left.magnitude() + 2 * right.magnitude();
+        }
+
+        protected SnailNumber clone() {
+            if (isDigit()) return new SnailNumber(value);
+            return new SnailNumber(left.clone(), right.clone());
         }
 
         private void reduce() {
