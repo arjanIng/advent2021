@@ -31,7 +31,6 @@ public class Day19 {
         while(!scanners.isEmpty()) {
             outer:
             for (Scanner scanner : scanners) {
-                System.out.println("Scanners: " + scanners.size());
                 List<Scanner> rotations = scanner.getRotations();
                 for (Scanner rot : rotations) {
                     HashMap<Pos, Integer> numEqualDiffs = new HashMap<>();
