@@ -16,14 +16,14 @@ public class Day2 {
         program[1] = 12;
         program[2] = 2;
 
-        int result = Computer.executeIntCode(program);
+        int result = IntCode.execute(program);
         System.out.println("Part 1: " + result);
         
         for (int noun = 0; noun < 100; noun++) {
             for (int verb = 0; verb < 100; verb++) {
                 program[1] = noun;
                 program[2] = verb;
-                result = Computer.executeIntCode(program);
+                result = IntCode.execute(program);
                 if (result == 19690720) {
                     System.out.println("Part 2: " + ((100 * noun) + verb));
                     break;

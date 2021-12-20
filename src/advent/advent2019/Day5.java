@@ -12,7 +12,7 @@ public class Day5 {
         String input = Files.lines(Paths.get(filename)).collect(Collectors.toList()).get(0);
         int[] program = Arrays.stream(input.split(",")).mapToInt(Integer::parseInt).toArray();
 
-        int result = Computer.executeIntCode(program, 1);
+        int result = IntCode.execute(program, 5, false);
         
         System.out.println("Part 1: " + result);
     }
