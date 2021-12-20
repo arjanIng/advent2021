@@ -53,8 +53,7 @@ public class IntCodeMachine {
     }
 
     public IntCodeMachine execute() {
-        boolean running = true;
-        while (running) {
+        while (!halted) {
             int opcode = (int) mem[pc];
             Instruction ins = INSTRUCTIONS.get(opcode % 100);
             long[] params = new long[ins.numParams];
@@ -75,22 +74,22 @@ public class IntCodeMachine {
             int pcstate = pc;
             int relbasestate = relbase;
             switch (ins.operation) {
-                case ADD -> store(params[2], val(params[0], modes[0]) + val(params[1], modes[1]), modes[2]);
-                case MUL -> store(params[2], val(params[0], modes[0]) * val(params[1], modes[1]), modes[2]);
-                case INPUT -> store(params[0], ioDevice.output(), modes[0]);
+                case ADD -> poke(params[2], peek(params[0], modes[0]) + peek(params[1], modes[1]), modes[2]);
+                case MUL -> poke(params[2], peek(params[0], modes[0]) * peek(params[1], modes[1]), modes[2]);
+                case INPUT -> poke(params[0], ioDevice.output(), modes[0]);
                 case OUTPUT -> {
-                    long output = val(params[0], modes[0]);
+                    long output = peek(params[0], modes[0]);
                     if (debugging) System.out.println("OUTPUT: " + output);
                     ioDevice.input(output);
                     pc += ins.numParams + 1;
                     return this;
                 }
-                case JNZ -> { if (val(params[0], modes[0]) != 0) pc = (int) val(params[1], modes[1]); }
-                case JZ -> { if (val(params[0], modes[0]) == 0) pc = (int) val(params[1], modes[1]); }
-                case SLT -> store(params[2], (val(params[0], modes[0]) < val(params[1], modes[1])) ? 1 : 0, modes[2]);
-                case SEQ -> store(params[2], (val(params[0], modes[0]) == val(params[1], modes[1])) ? 1 : 0, modes[2]);
-                case RELBASE -> this.relbase += val(params[0], modes[0]);
-                case HALT -> { running = false; halted = true; if (debugging) System.out.println("bye"); }
+                case JNZ -> { if (peek(params[0], modes[0]) != 0) pc = (int) peek(params[1], modes[1]); }
+                case JZ -> { if (peek(params[0], modes[0]) == 0) pc = (int) peek(params[1], modes[1]); }
+                case SLT -> poke(params[2], (peek(params[0], modes[0]) < peek(params[1], modes[1])) ? 1 : 0, modes[2]);
+                case SEQ -> poke(params[2], (peek(params[0], modes[0]) == peek(params[1], modes[1])) ? 1 : 0, modes[2]);
+                case RELBASE -> this.relbase += peek(params[0], modes[0]);
+                case HALT -> { halted = true; if (debugging) System.out.println("bye"); }
                 default -> throw new RuntimeException("Unknown opcode");
             }
             if (debugging) {
@@ -106,7 +105,7 @@ public class IntCodeMachine {
         return this;
     }
 
-    private void store(long param, long value, int mode) {
+    private void poke(long param, long value, int mode) {
         switch (mode) {
             case 0, 1 -> mem[(int) param] = value;
             case 2 -> mem[(int) (relbase + param)] = value;
@@ -114,7 +113,7 @@ public class IntCodeMachine {
         }
     }
 
-    private long val(long param, int mode) {
+    private long peek(long param, int mode) {
         switch (mode) {
             case 0 -> { return mem[(int) param]; }
             case 1 -> { return param; }

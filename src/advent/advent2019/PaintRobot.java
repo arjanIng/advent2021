@@ -52,21 +52,13 @@ public class PaintRobot implements IODevice {
         }
 
         public Pos move(Pos from) {
-            switch (this.ordinal()) {
-                case 0 -> {
-                    return new Pos(from.x, from.y - 1);
-                }
-                case 1 -> {
-                    return new Pos(from.x + 1, from.y);
-                }
-                case 2 -> {
-                    return new Pos(from.x, from.y + 1);
-                }
-                case 3 -> {
-                    return new Pos(from.x - 1, from.y);
-                }
+            return switch (this.ordinal()) {
+                case 0 -> new Pos(from.x, from.y - 1);
+                case 1 -> new Pos(from.x + 1, from.y);
+                case 2 -> new Pos(from.x, from.y + 1);
+                case 3 -> new Pos(from.x - 1, from.y);
                 default -> throw new RuntimeException("Can't move?");
-            }
+            };
         }
     }
 
