@@ -3,10 +3,8 @@ package advent.advent2019;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class Day9 {
@@ -17,14 +15,14 @@ public class Day9 {
         var program = Arrays.stream(lines.get(0).split(",")).mapToLong(Long::parseLong).toArray();
 
         IntCodeMachine machine = new IntCodeMachine("day9", program);
-        machine.getIoDevice().input(1);
-        long result = machine.execute().untilHalted().getIoDevice().output();
+        machine.ioDevice().input(1);
+        long result = machine.run().untilHalted().ioDevice().output();
 
         System.out.println("Part 1: " + result);
 
         machine.reset();
-        machine.getIoDevice().input(2);
-        result = machine.execute().untilHalted().getIoDevice().output();
+        machine.ioDevice().input(2);
+        result = machine.run().untilHalted().ioDevice().output();
         System.out.println("Part 2: " + result);
     }
 

@@ -18,12 +18,12 @@ public class Day11 {
         IntCodeMachine machine = new IntCodeMachine("paintrobot", program);
         machine.setIoDevice(robot);
 
-        machine.execute().untilHalted();
+        machine.run().untilHalted();
         System.out.println("Part 1: " + robot.getPainted().size());
 
         machine.reset();
         robot.getPainted().put(new PaintRobot.Pos(0, 0), 1L);
-        machine.execute().untilHalted();
+        machine.run().untilHalted();
 
         Map<PaintRobot.Pos, Long> dots = robot.getPainted();
         int minx = dots.keySet().stream().mapToInt(PaintRobot.Pos::x).min().orElseThrow();

@@ -52,7 +52,7 @@ public class IntCodeMachine {
         reset();
     }
 
-    public IntCodeMachine execute() {
+    public IntCodeMachine run() {
         while (!halted) {
             int opcode = (int) mem[pc];
             Instruction ins = INSTRUCTIONS.get(opcode % 100);
@@ -123,11 +123,11 @@ public class IntCodeMachine {
     }
 
     public IntCodeMachine untilHalted() {
-        while (!halted) execute();
+        while (!halted) run();
         return this;
     }
 
-    public IODevice getIoDevice() {
+    public IODevice ioDevice() {
         return ioDevice;
     }
 

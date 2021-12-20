@@ -6,26 +6,23 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Day7 {
 
     public void solve(List<String> lines) throws IOException {
         var program = Arrays.stream(lines.get(0).split(",")).mapToLong(Long::parseLong).toArray();
 
-        IntCodeMachine part1 = new IntCodeMachine("day7-part1", program);
-        part1.setDebugging(false);
+        IntCodeMachine machine1 = new IntCodeMachine("day7-part1", program);
+        machine1.setDebugging(false);
 
-        long maxResult = allCombinations(0, ia -> {
+        long maxResult = allCombinations(ia -> {
             long result = 0;
             for (int i = 0; i < 5; i++){
-                part1.reset();
-                part1.getIoDevice().input(new long[]{ia[i], result});
-                result = part1.execute().untilHalted().getIoDevice().output();
+                machine1.reset();
+                machine1.ioDevice().input(new long[] {ia[i], result} );
+                result = machine1.run().untilHalted().ioDevice().output();
             }
             return result;
         });
@@ -37,23 +34,19 @@ public class Day7 {
         List<IntCodeMachine> machines = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             var machine = new IntCodeMachine("amp-" + i, program2);
-            machine.setDebugging(true);
             machines.add(machine);
         }
 
-        maxResult = allCombinations(5, ia -> {
+        maxResult = allCombinations(ia -> {
             machines.forEach(IntCodeMachine::reset);
-            for (int i = 0; i < 5; i++) {
-                machines.get(i).getIoDevice().input(ia[i] + 5);
-            }
+            for (int i = 0; i < 5; i++) machines.get(i).ioDevice().input(ia[i] + 5);
             boolean running = true;
             long result = 0;
             while (running) {
                 for (var machine : machines) {
-                    machine.setDebugging(false);
-                    machine.getIoDevice().input(result);
-                    machine.execute();
-                    result = machine.getIoDevice().output();
+                    machine.ioDevice().input(result);
+                    machine.run();
+                    result = machine.ioDevice().output();
 
                     if (machine.isHalted()) running = false;
                 }
@@ -63,7 +56,7 @@ public class Day7 {
         System.out.println("Part 2: " + maxResult);
     }
 
-    private long allCombinations(int offset, Function<Integer[], Long> function) {
+    private long allCombinations(Function<Integer[], Long> function) {
         long maxResult = -1;
         for (var a = 0; a < 5; a++) {
             for (var b = 0; b < 5; b++) {
