@@ -35,17 +35,17 @@ public class Day20 {
             inf = decoder.charAt(inf == '.' ? 0B000000000 : 0B111111111);
             image = newImage;
             if (turn == 1) {
-                System.out.println("Part 1: " + getCount(image));
+                System.out.println("Part 1: " + count(image));
             }
         }
-        System.out.println("Part 2: " + getCount(image));
+        System.out.println("Part 2: " + count(image));
     }
 
     private boolean isOutside(List<String> image, int yy, int xx) {
         return yy < 0 || yy >= image.size() || xx < 0 || xx >= image.get(0).length();
     }
 
-    private long getCount(List<String> image) {
+    private long count(List<String> image) {
         return image.stream().map(line -> line.chars().filter(c -> c == '#').count()).reduce(0L, Long::sum);
     }
 
