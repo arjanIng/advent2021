@@ -3,21 +3,18 @@ package advent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Stack;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Day18 {
 
     public void solve(List<String> input) {
-        Stack<SnailNumber> sums = new Stack<>();
+        Deque<SnailNumber> sums = new ArrayDeque<>();
         List<SnailNumber> combinations = new ArrayList<>();
 
         for (String line : input) {
             SnailNumber sn = parse(line);
-            sums.insertElementAt(sn, 0); // reverse the stack so we pop the top line first
+            sums.addLast(sn);
             combinations.add(sn);
         }
         SnailNumber sum = sums.pop();
