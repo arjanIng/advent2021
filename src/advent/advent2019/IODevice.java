@@ -8,4 +8,8 @@ public interface IODevice {
 
     void reset();
 
+    default void input(long[] inputs) {
+        for (long input : inputs) input(input);
+    }
+
 }
