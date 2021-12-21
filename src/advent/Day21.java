@@ -16,7 +16,7 @@ public class Day21 {
 
 
     public void solve(List<String> input) {
-        int[] pawns = input.stream().map(l -> l.split(":")[1].trim()).mapToInt(Integer::parseInt).toArray();
+        int[] pawns = input.stream().map(l -> l.split(":")[1].trim()).mapToInt(Integer::parseInt).map(i -> i - 1).toArray();
         part1(Arrays.copyOf(pawns, 2));
 
         this.rollOccurrence = diceRolls();
@@ -37,8 +37,7 @@ public class Day21 {
 
             ps[p] += die;
             ps[p] %= 10;
-            if (ps[p] == 0) ps[p] = 10;
-            ss[p] += ps[p];
+            ss[p] += ps[p] + 1;
             countAllWins(ps, ss, p == 0 ? 1 : 0, occurs * occ);
         });
     }
@@ -66,13 +65,13 @@ public class Day21 {
         while (true) {
             for (player = 0; player < 2; player++) {
                 for (int i = 0; i < 3; i++) {
-                    pawns[player] += die % 10;
-                    if (pawns[player] > 10) pawns[player] = pawns[player] - 10;
+                    pawns[player] += die;
+                    pawns[player] %= 10;
                     die++;
                     if (die > 100) die = 1;
                     rolls++;
                 }
-                scores[player] += pawns[player];
+                scores[player] += pawns[player] + 1;
                 if (scores[player] >= 1000) {
                     winner = player;
                     break finish;
