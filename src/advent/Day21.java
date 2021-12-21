@@ -13,13 +13,12 @@ public class Day21 {
 
     Map<Integer, Integer> rollOccurrence;
 
-
     public void solve(List<String> input) {
         int[] pawns = input.stream().map(l -> l.split(":")[1].trim()).mapToInt(Integer::parseInt).map(i -> i - 1).toArray();
         part1(Arrays.copyOf(pawns, 2));
 
         this.rollOccurrence = diceRolls();
-        long[] wins = countAllWins(pawns, new int[] {0, 0}, 0, 1, new long[2]);
+        long[] wins = countAllWins(pawns, new int[]{0, 0}, 0, 1, new long[2]);
         System.out.println("Part 2: " + Math.max(wins[0], wins[1]));
     }
 
@@ -62,12 +61,11 @@ public class Day21 {
         int die = 1;
         int rolls = 0;
         int[] scores = new int[2];
-        int player;
-        int winner;
+        int loser;
 
         finish:
         while (true) {
-            for (player = 0; player < 2; player++) {
+            for (int player = 0; player < 2; player++) {
                 for (int i = 0; i < 3; i++) {
                     pawns[player] += die;
                     pawns[player] %= 10;
@@ -77,12 +75,12 @@ public class Day21 {
                 }
                 scores[player] += pawns[player] + 1;
                 if (scores[player] >= 1000) {
-                    winner = player;
+                    loser = player ^ 1;
                     break finish;
                 }
             }
         }
-        System.out.println("Part 1: " + (scores[(winner + 1) % 2] * rolls));
+        System.out.println("Part 1: " + (scores[loser] * rolls));
     }
 
 
