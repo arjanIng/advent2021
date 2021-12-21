@@ -49,15 +49,15 @@ public class Day21 {
             player++;
         }
         var diceRolls = diceRolls();
-        recurse(0, diceRolls, pawns[0], pawns[1], 0, 0, 0, 1);
+        countAllWins(0, diceRolls, pawns[0], pawns[1], 0, 0, 0, 1);
         System.out.println("Part 2: " + Math.max(win0, win1));
     }
 
     long win0 = 0;
     long win1 = 0;
 
-    private void recurse(final int step, Map<Integer, Integer> rolls, final int pawn0, final int pawn1,
-                         final int score0, final int score1, final int player, final long numOccurs) {
+    private void countAllWins(final int step, Map<Integer, Integer> rolls, final int pawn0, final int pawn1,
+                              final int score0, final int score1, final int player, final long numOccurs) {
         if (score0 >= 21) {
             win0 += numOccurs;
             return;
@@ -77,7 +77,8 @@ public class Day21 {
                 if (newPawn1 > 10) newPawn1 = newPawn1 - 10;
                 newScore1 += newPawn1;
             }
-            recurse(step + 1, rolls, newPawn0, newPawn1, newScore0, newScore1, player == 0 ? 1 : 0, numOccurs * num);
+            countAllWins(step + 1, rolls, newPawn0, newPawn1, newScore0, newScore1,
+                    player == 0 ? 1 : 0, numOccurs * num);
         });
     }
 
