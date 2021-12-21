@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class Day18 {
 
     public void solve(List<String> input) {
-        Deque<SnailNumber> sums = new ArrayDeque<>();
+        Deque<SnailNumber> sums = new LinkedList<>();
         List<SnailNumber> combinations = new ArrayList<>();
 
         for (String line : input) {
@@ -141,11 +141,8 @@ public class Day18 {
     }
 
     private SnailNumber parse(String s) {
-        if (s.length() == 1) {
-            return new SnailNumber(Integer.parseInt(s));
-        }
-        int level = 0;
-        int splitAt = -1;
+        if (s.length() == 1) return new SnailNumber(Integer.parseInt(s));
+        int level = 0; int splitAt = -1;
         for (int i = 0; i < s.length() && splitAt == -1; i++) {
             switch (s.charAt(i)) {
                 case '[' -> level++;

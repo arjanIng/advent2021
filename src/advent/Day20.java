@@ -32,7 +32,7 @@ public class Day20 {
                 }
                 newImage.add(newRow.toString());
             }
-            inf = decoder.charAt(inf == '.' ? 0B000000000 : 0B111111111);
+            inf = decoder.charAt(inf == '.' ? 0 : 511);
             image = newImage;
             if (turn == 1) {
                 System.out.println("Part 1: " + count(image));
