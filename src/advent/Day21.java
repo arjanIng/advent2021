@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 public class Day21 {
 
-    long[] wins = new long[] { 0, 0};
     Map<Integer, Integer> rollOccurrence;
 
 
@@ -20,17 +19,19 @@ public class Day21 {
         part1(Arrays.copyOf(pawns, 2));
 
         this.rollOccurrence = diceRolls();
-        countAllWins(pawns, new int[] {0, 0}, 0, 1);
+        long[] wins = countAllWins(pawns, new int[] {0, 0}, 0, 1, new long[2]);
         System.out.println("Part 2: " + Math.max(wins[0], wins[1]));
     }
 
-    private void countAllWins(final int[] pawns, final int[] scores, final int p, final long occurs) {
+    private long[] countAllWins(final int[] pawns, final int[] scores, final int p, final long occurs, final long[] wins) {
         for (var i = 0; i < 2; i++) {
             if (scores[i] >= 21) {
-                this.wins[i] += occurs;
-                return;
+                long[] nw = Arrays.copyOf(wins, 2);
+                nw[i] += occurs;
+                return nw;
             }
         }
+        long[] newWins = new long[2];
         this.rollOccurrence.forEach((die, occ) -> {
             int[] ss = Arrays.copyOf(scores, 2);
             int[] ps = Arrays.copyOf(pawns, 2);
@@ -38,8 +39,11 @@ public class Day21 {
             ps[p] += die;
             ps[p] %= 10;
             ss[p] += ps[p] + 1;
-            countAllWins(ps, ss, p == 0 ? 1 : 0, occurs * occ);
+            long[] w = countAllWins(ps, ss, p == 0 ? 1 : 0, occurs * occ, wins);
+            newWins[0] += w[0];
+            newWins[1] += w[1];
         });
+        return newWins;
     }
 
     private Map<Integer, Integer> diceRolls() {
