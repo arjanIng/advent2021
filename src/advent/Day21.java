@@ -3,10 +3,7 @@ package advent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Day21 {
@@ -20,7 +17,7 @@ public class Day21 {
 
         part1(Arrays.copyOf(pawns, 2));
 
-        this.rolls = diceRolls();
+        this.rolls = diceRolls(new ArrayDeque<>());
         countAllWins(pawns, new int[] {0, 0}, 0, 1);
         System.out.println("Part 2: " + Math.max(wins[0], wins[1]));
     }
@@ -44,14 +41,23 @@ public class Day21 {
         });
     }
 
-    private Map<Integer, Integer> diceRolls() {
+    private Map<Integer, Integer> diceRolls(Deque<Integer> dice) {
         Map<Integer, Integer> rolls = new HashMap<>();
-        for (int die1 = 1; die1 <= 3; die1++) {
-            for (int die2 = 1; die2 <= 3; die2++) {
-                for (int die3 = 1; die3 <= 3; die3++) {
-                    rolls.merge(die1 + die2 + die3, 1, Integer::sum);
+        if (dice.size() == 3) {
+            rolls.put(dice.stream().reduce(Integer::sum).orElseThrow(), 1);
+            return rolls;
+        }
+        for (int die = 1; die <= 3; die++) {
+            dice.push(die);
+            var result = diceRolls(dice);
+            dice.pop();
+            result.forEach((k, v) -> {
+                if (!rolls.containsKey(k)) {
+                    rolls.put(k, v);
+                } else {
+                    rolls.put(k, rolls.get(k) + v);
                 }
-            }
+            });
         }
         return rolls;
     }
