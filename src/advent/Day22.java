@@ -9,29 +9,26 @@ import java.util.stream.Collectors;
 public class Day22 {
 
     public void solve(List<String> input) {
-        List<Cube> instructions = new ArrayList<>();
-        input.stream().forEach(l -> {
+        List<Cube> cubes = new ArrayList<>();
+        input.forEach(l -> {
             String[] parts = l.split(" ");
             int[] coords = Arrays.stream(parts[1].split(","))
                     .map(trio -> trio.split("=")[1])
                     .flatMap(duo -> Arrays.stream(duo.split("\\.\\.")))
                     .mapToInt(Integer::parseInt).toArray();
-            instructions.add(new Cube(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], parts[0].equals("on")));
-        });
-        Set<Point> cubes = new HashSet<>();
-        instructions.stream().filter(i -> i.x1 >= -50 && i.x1 <= 50).forEach(ins -> {
-            Set<Point> change = ins.toCubes();
-            if (ins.on) {
-                cubes.addAll(change);
-            } else {
-                cubes.removeAll(change);
-            }
+            cubes.add(new Cube(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], parts[0].equals("on")));
         });
 
-        System.out.println("Part 1: " + cubes.size());
+        Set<Point> points = new HashSet<>();
+        cubes.stream().filter(i -> i.x1 >= -50 && i.x1 <= 50).forEach(cube -> {
+            Set<Point> change = cube.toPoints();
+            if (cube.on) points.addAll(change); else points.removeAll(change);
+        });
+
+        System.out.println("Part 1: " + points.size());
 
         List<Cube> placed = new ArrayList<>();
-        for (Cube c : instructions) {
+        for (Cube c : cubes) {
             List<Cube> todo = new ArrayList<>();
             if (c.on) todo.add(c);
             for (Cube p : placed) {
@@ -71,16 +68,16 @@ public class Day22 {
             return Optional.of(new Cube(xb1, xb2, yb1, yb2, zb1, zb2, on));
         }
 
-        public Set<Point> toCubes() {
-            Set<Point> cubes = new HashSet<>();
+        public Set<Point> toPoints() {
+            Set<Point> points = new HashSet<>();
             for (int z = z1; z <= z2; z++) {
                 for (int y = y1; y <= y2; y++) {
                     for (int x = x1; x <= x2; x++) {
-                        cubes.add(new Point(x, y, z));
+                        points.add(new Point(x, y, z));
                     }
                 }
             }
-            return cubes;
+            return points;
         }
     }
 
