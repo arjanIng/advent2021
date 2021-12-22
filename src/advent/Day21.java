@@ -14,7 +14,8 @@ public class Day21 {
     Map<Integer, Integer> rollOccurrence;
 
     public void solve(List<String> input) {
-        int[] pawns = input.stream().map(l -> l.split(":")[1].trim()).mapToInt(Integer::parseInt).map(i -> i - 1).toArray();
+        int[] pawns = input.stream().map(l -> l.split(":")[1].trim())
+                .mapToInt(Integer::parseInt).map(i -> i - 1).toArray();
         part1(Arrays.copyOf(pawns, 2));
 
         this.rollOccurrence = diceRolls();
@@ -22,7 +23,8 @@ public class Day21 {
         System.out.println("Part 2: " + Math.max(wins[0], wins[1]));
     }
 
-    private long[] countAllWins(final int[] pawns, final int[] scores, final int p, final long occurs, final long[] wins) {
+    private long[] countAllWins(final int[] pawns, final int[] scores, final int p,
+                                final long occurs, final long[] wins) {
         for (var i = 0; i < 2; i++) {
             if (scores[i] >= 21) {
                 long[] nw = Arrays.copyOf(wins, 2);

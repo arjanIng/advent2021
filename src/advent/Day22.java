@@ -1,0 +1,95 @@
+package advent;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class Day22 {
+
+    public void solve(List<String> input) {
+        List<Cube> instructions = new ArrayList<>();
+        input.stream().forEach(l -> {
+            String[] parts = l.split(" ");
+            int[] coords = Arrays.stream(parts[1].split(","))
+                    .map(trio -> trio.split("=")[1])
+                    .flatMap(duo -> Arrays.stream(duo.split("\\.\\.")))
+                    .mapToInt(Integer::parseInt).toArray();
+            instructions.add(new Cube(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], parts[0].equals("on")));
+        });
+        Set<Point> cubes = new HashSet<>();
+        instructions.stream().filter(i -> i.x1 >= -50 && i.x1 <= 50).forEach(ins -> {
+            Set<Point> change = ins.toCubes();
+            if (ins.on) {
+                cubes.addAll(change);
+            } else {
+                cubes.removeAll(change);
+            }
+        });
+
+        System.out.println("Part 1: " + cubes.size());
+
+        List<Cube> placed = new ArrayList<>();
+        for (Cube c : instructions) {
+            List<Cube> todo = new ArrayList<>();
+            if (c.on) todo.add(c);
+            for (Cube p : placed) {
+                Optional<Cube> inter = p.intersect(c, !p.on);
+                inter.ifPresent(todo::add);
+            }
+            placed.addAll(todo);
+        }
+
+        System.out.println("Part 2: " + placed.stream().mapToLong(Cube::volume).sum());
+
+    }
+
+    record Point(int x, int y, int z) {
+    }
+
+    record Cube(int x1, int x2, int y1, int y2, int z1, int z2, boolean on) {
+
+        public long volume() {
+            return (x2 - x1 + 1L) * (y2 - y1 + 1L) * (z2 - z1 + 1L) * (on ? 1 : -1);
+        }
+
+        public Optional<Cube> intersect(Cube c, boolean on) {
+            if (x1 > c.x2 || x2 < c.x1 || y1 > c.y2 ||
+                    y2 < c.y1 || z1 > c.z2 || z2 < c.z1)
+                return Optional.empty();
+
+            int xb1, xb2, yb1, yb2, zb1, zb2;
+
+            xb1 = Math.max(x1, c.x1);
+            xb2 = Math.min(x2, c.x2);
+            yb1 = Math.max(y1, c.y1);
+            yb2 = Math.min(y2, c.y2);
+            zb1 = Math.max(z1, c.z1);
+            zb2 = Math.min(z2, c.z2);
+
+            return Optional.of(new Cube(xb1, xb2, yb1, yb2, zb1, zb2, on));
+        }
+
+        public Set<Point> toCubes() {
+            Set<Point> cubes = new HashSet<>();
+            for (int z = z1; z <= z2; z++) {
+                for (int y = y1; y <= y2; y++) {
+                    for (int x = x1; x <= x2; x++) {
+                        cubes.add(new Point(x, y, z));
+                    }
+                }
+            }
+            return cubes;
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        Day22 solver = new Day22();
+        List<String> lines = Files.lines(Paths.get("./data/day22.txt")).collect(Collectors.toList());
+        long start = System.currentTimeMillis();
+        solver.solve(lines);
+        System.out.printf("Done after %d millis%n", System.currentTimeMillis() - start);
+    }
+
+}
