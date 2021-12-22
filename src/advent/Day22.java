@@ -53,19 +53,12 @@ public class Day22 {
 
         public Optional<Cube> intersect(Cube c, boolean on) {
             if (x1 > c.x2 || x2 < c.x1 || y1 > c.y2 ||
-                    y2 < c.y1 || z1 > c.z2 || z2 < c.z1)
-                return Optional.empty();
-
-            int xb1, xb2, yb1, yb2, zb1, zb2;
-
-            xb1 = Math.max(x1, c.x1);
-            xb2 = Math.min(x2, c.x2);
-            yb1 = Math.max(y1, c.y1);
-            yb2 = Math.min(y2, c.y2);
-            zb1 = Math.max(z1, c.z1);
-            zb2 = Math.min(z2, c.z2);
-
-            return Optional.of(new Cube(xb1, xb2, yb1, yb2, zb1, zb2, on));
+                    y2 < c.y1 || z1 > c.z2 || z2 < c.z1) return Optional.empty();
+            
+            return Optional.of(new Cube(
+                    Math.max(x1, c.x1), Math.min(x2, c.x2),
+                    Math.max(y1, c.y1), Math.min(y2, c.y2),
+                    Math.max(z1, c.z1), Math.min(z2, c.z2), on));
         }
 
         public Set<Point> toPoints() {
