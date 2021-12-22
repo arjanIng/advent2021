@@ -10,11 +10,18 @@ public class Day5 {
     
     public void day5(String filename) throws IOException {
         String input = Files.lines(Paths.get(filename)).collect(Collectors.toList()).get(0);
-        int[] program = Arrays.stream(input.split(",")).mapToInt(Integer::parseInt).toArray();
+        long[] program = Arrays.stream(input.split(",")).mapToLong(Long::parseLong).toArray();
 
-        int result = IntCode.execute(program, 5, false);
-        
-        System.out.println("Part 1: " + result);
+        IntCodeMachine machine = new IntCodeMachine("TEST", program);
+        machine.getIoDevice().input(1);
+        machine.execute().untilHalted();
+        System.out.println("Part 1: " + ((BasicIODevice) machine.getIoDevice()).lastOutput());
+
+        machine.reset();
+        machine.getIoDevice().input(5);
+        machine.execute().untilHalted();
+        System.out.println("Part 2: " + ((BasicIODevice) machine.getIoDevice()).lastOutput());
+
     }
 
     public static void main(String[] args) throws IOException {

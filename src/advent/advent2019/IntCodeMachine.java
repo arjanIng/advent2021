@@ -52,9 +52,14 @@ public class IntCodeMachine {
         reset();
     }
 
-    public IntCodeMachine run() {
+    public IntCodeMachine execute() {
         while (!halted) {
             int opcode = (int) mem[pc];
+            if (!INSTRUCTIONS.containsKey(opcode % 100)) {
+                System.out.printf("%s: Unknown opcode: %d at address %d%n", name, opcode, pc);
+                this.halted = true;
+                return this;
+            }
             Instruction ins = INSTRUCTIONS.get(opcode % 100);
             long[] params = new long[ins.numParams];
             int[] modes = new int[ins.numParams];
@@ -79,7 +84,7 @@ public class IntCodeMachine {
                 case INPUT -> poke(params[0], ioDevice.output(), modes[0]);
                 case OUTPUT -> {
                     long output = peek(params[0], modes[0]);
-                    if (debugging) System.out.println("OUTPUT: " + output);
+                    if (debugging) System.out.printf("OUTPUT: %s", name, output);
                     ioDevice.input(output);
                     pc += ins.numParams + 1;
                     return this;
@@ -105,15 +110,15 @@ public class IntCodeMachine {
         return this;
     }
 
-    private void poke(long param, long value, int mode) {
+    public void poke(long addr, long value, int mode) {
         switch (mode) {
-            case 0, 1 -> mem[(int) param] = value;
-            case 2 -> mem[(int) (relbase + param)] = value;
+            case 0, 1 -> mem[(int) addr] = value;
+            case 2 -> mem[(int) (relbase + addr)] = value;
             default -> throw new RuntimeException("Unknown address mode");
         }
     }
 
-    private long peek(long param, int mode) {
+    public long peek(long param, int mode) {
         switch (mode) {
             case 0 -> { return mem[(int) param]; }
             case 1 -> { return param; }
@@ -123,11 +128,11 @@ public class IntCodeMachine {
     }
 
     public IntCodeMachine untilHalted() {
-        while (!halted) run();
+        while (!halted) execute();
         return this;
     }
 
-    public IODevice ioDevice() {
+    public IODevice getIoDevice() {
         return ioDevice;
     }
 

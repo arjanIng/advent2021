@@ -9,20 +9,18 @@ import java.util.stream.Collectors;
 
 public class Day9 {
 
-    private int data;
-
     public void solve(List<String> lines) {
         var program = Arrays.stream(lines.get(0).split(",")).mapToLong(Long::parseLong).toArray();
 
         IntCodeMachine machine = new IntCodeMachine("day9", program);
-        machine.ioDevice().input(1);
-        long result = machine.run().untilHalted().ioDevice().output();
+        machine.getIoDevice().input(1);
+        long result = machine.execute().untilHalted().getIoDevice().output();
 
         System.out.println("Part 1: " + result);
 
         machine.reset();
-        machine.ioDevice().input(2);
-        result = machine.run().untilHalted().ioDevice().output();
+        machine.getIoDevice().input(2);
+        result = machine.execute().untilHalted().getIoDevice().output();
         System.out.println("Part 2: " + result);
     }
 

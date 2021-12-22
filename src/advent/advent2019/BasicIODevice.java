@@ -18,6 +18,10 @@ public class BasicIODevice implements IODevice {
         return val;
     }
 
+    public long lastOutput() {
+        return data[idp - 1];
+    }
+
     @Override
     public void reset() {
         data = new long[256];

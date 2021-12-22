@@ -21,10 +21,6 @@ public class PaintRobot implements IODevice {
         }
     }
 
-    public Map<Pos, Long> getPainted() {
-        return painted;
-    }
-
     @Override
     public long output() {
         return painted.containsKey(pos) ? painted.get(pos) : 0;
@@ -36,6 +32,10 @@ public class PaintRobot implements IODevice {
         painted = new HashMap<>();
         direction = Dir.UP;
         moving = false;
+    }
+
+    public Map<Pos, Long> getPainted() {
+        return painted;
     }
 
     enum Dir {
