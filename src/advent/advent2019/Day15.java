@@ -15,13 +15,12 @@ public class Day15 {
         IntCodeMachine machine = new IntCodeMachine("Repair", program);
         droid = new BlockingIOQueue();
         machine.setIoDevice(droid);
-        droid.setDebugging(false);
         machine.executeThreaded();
 
         Arrays.stream(grid).forEach(ca -> Arrays.fill(ca, ' '));
         var start = new Pos(0, 0);
 
-        var bestRoute = calcRoutes(start, 1, List.of(start));
+        calcRoutes(start, -1, 1, List.of(start));
 
         assert bestRoute != null;
         System.out.println("Part 1: " + (bestRoute.size() - 1));
@@ -36,8 +35,6 @@ public class Day15 {
                 if (c == 'O') oxygenSystem = new Pos(x, y);
             }
         }
-        assert (oxygenSystem != null);
-
         Set<Pos> frontier = new HashSet<>();
         frontier.add(oxygenSystem);
         int turn = 0;
@@ -59,69 +56,37 @@ public class Day15 {
             frontier.removeAll(remove);
             frontier.addAll(add);
             turn++;
-            System.out.printf("after turn %d, rooms: %d", turn, rooms);
-            Arrays.stream(grid).map(String::valueOf).forEach(System.out::println);
         }
 
         System.out.println("Part 2: " + turn);
-
     }
 
 
-    char[][] grid = new char[75][75];
+    char[][] grid = new char[60][60];
     Pos oxygenLocation;
+    List<Pos> bestRoute;
 
-    private List<Pos> calcRoutes(Pos pos, int state, List<Pos> route) {
+    private void calcRoutes(Pos pos, int lastdir, int state, List<Pos> route) {
+        if (state == 0) return;
         if (state == 2) {
-            System.out.printf("found route of length %d at pos %d,%d%n", route.size(), pos.x, pos.y);
-            Arrays.stream(grid).map(String::valueOf).forEach(System.out::println);
             oxygenLocation = pos;
-            return route;
+            if (bestRoute == null) bestRoute = route; else bestRoute = bestRoute.size() < route.size() ? bestRoute : route;
         }
-        List<Pos> bestRoute = null;
-        char[][] gridCopy = new char[grid.length][grid[0].length];
-        for (int y = 0; y < grid.length; y++) gridCopy[y] = Arrays.copyOf(grid[y], grid[y].length);
-        gridCopy[pos.y + 40][pos.x + 40] = 'D';
-        Arrays.stream(gridCopy).map(String::valueOf).forEach(System.out::println);
-        boolean endReached = false;
         for (int dir = 1; dir <= 4; dir++) {
             Pos newPos = pos.move(dir);
-            if (route.size() < 2) {
-                System.out.printf("Current route: %s%n", newPos);
-                Arrays.stream(grid).map(String::valueOf).forEach(System.out::println);
-            }
             if (!route.contains(newPos)) {
                 int newState = (int) droid.waitForOutput(dir);
-                if (newState == 2) { endReached = true; break; }
-                grid[newPos.y + 40][newPos.x + 40] = newState == 0 ? '#' : newState == 1 ? '.' : 'O';
-                if (newState != 0) {
-                    List<Pos> newRoute = new ArrayList<>(route);
-                    newRoute.add(newPos);
-                    List<Pos> r = calcRoutes(newPos, newState, newRoute);
-                    if (bestRoute == null && r != null) {
-                        bestRoute = r;
-                    } else if (r != null) {
-                        if (r.size() < bestRoute.size()) {
-                            bestRoute = r;
-                        }
-                    }
-
-                }
+                grid[newPos.y + 30][newPos.x + 30] = newState == 0 ? '#' : newState == 1 ? '.' : 'O';
+                List<Pos> newRoute = new ArrayList<>(route);
+                newRoute.add(newPos);
+                calcRoutes(newPos, dir, newState, newRoute);
             }
         }
-        if (bestRoute == null || endReached) {
-            Pos earlier = route.get(route.size() - 2);
-            int backDirection = 0;
-            if (pos.y > earlier.y) backDirection = 1;
-            if (pos.y < earlier.y) backDirection = 2;
-            if (pos.x > earlier.x) backDirection = 3;
-            if (pos.x < earlier.x) backDirection = 4;
-
-            int backstatus = (int) droid.waitForOutput(backDirection);
+        if (route.size() >= 2) {
+            int backstatus = (int) droid.waitForOutput((lastdir % 2) + 1 + ((lastdir / 3) * 2));
             assert (backstatus == 1);
         }
 
-        return bestRoute;
     }
 
     record Pos(int x, int y) {

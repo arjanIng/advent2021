@@ -3,7 +3,6 @@ package advent.advent2019;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -23,8 +22,9 @@ public class IntCodeMachine {
 
     private static final int ONE_KB = 1024;
     private static final int ONE_MB = ONE_KB * ONE_KB;
-    
+
     private static final Map<Integer, Instruction> INSTRUCTIONS = new HashMap<>();
+
     static {
         INSTRUCTIONS.put(ADD, new Instruction("ADD", ADD, 3));
         INSTRUCTIONS.put(MUL, new Instruction("MUL", MUL, 3));
@@ -41,7 +41,7 @@ public class IntCodeMachine {
     private final String name;
     private final long[] code;
     private IODevice ioDevice;
-    private ExecutorService threadPool;
+    private ExecutorService executor;
 
     private boolean debugging;
     private long[] mem;
@@ -57,8 +57,8 @@ public class IntCodeMachine {
     }
 
     public void executeThreaded() {
-        threadPool = Executors.newSingleThreadExecutor();
-        threadPool.execute(this::execute);
+        executor = Executors.newSingleThreadExecutor();
+        executor.execute(this::execute);
     }
 
     public IntCodeMachine execute() {
@@ -78,13 +78,14 @@ public class IntCodeMachine {
             int pad = 5 - flags.length();
             for (int i = 0; i < pad; i++) flags.insert(0, "0");
             flags.setLength(3);
-            
+
             for (int i = 0; i < ins.numParams; i++) {
                 params[i] = mem[pc + i + 1];
                 modes[i] = Integer.parseInt(String.valueOf(flags.charAt(2 - i)));
             }
-            if (debugging) System.out.printf("%s: %04d %02d %-7s %s [%s] -> ", Thread.currentThread().getName(), pc, ins.operation, ins.name, flags,
-                    Arrays.stream(params).mapToObj(String::valueOf).collect(Collectors.joining(",")));
+            if (debugging)
+                System.out.printf("%s: %04d %02d %-7s %s [%s] -> ", Thread.currentThread().getName(), pc, ins.operation, ins.name, flags,
+                        Arrays.stream(params).mapToObj(String::valueOf).collect(Collectors.joining(",")));
             long[] state = Arrays.copyOf(mem, mem.length);
             int pcstate = pc;
             int relbasestate = relbase;
@@ -94,7 +95,8 @@ public class IntCodeMachine {
                 case INPUT -> {
                     long input = ioDevice.output();
                     if (debugging) System.out.printf("Storing input of %d to %d", input, params[0]);
-                    poke(params[0], input, modes[0]); }
+                    poke(params[0], input, modes[0]);
+                }
                 case OUTPUT -> {
                     long output = peek(params[0], modes[0]);
                     if (debugging) System.out.printf("OUTPUT: %s", output);
@@ -102,19 +104,28 @@ public class IntCodeMachine {
                     pc += ins.numParams + 1;
                     //return this;
                 }
-                case JNZ -> { if (peek(params[0], modes[0]) != 0) pc = (int) peek(params[1], modes[1]); }
-                case JZ -> { if (peek(params[0], modes[0]) == 0) pc = (int) peek(params[1], modes[1]); }
+                case JNZ -> {
+                    if (peek(params[0], modes[0]) != 0) pc = (int) peek(params[1], modes[1]);
+                }
+                case JZ -> {
+                    if (peek(params[0], modes[0]) == 0) pc = (int) peek(params[1], modes[1]);
+                }
                 case SLT -> poke(params[2], (peek(params[0], modes[0]) < peek(params[1], modes[1])) ? 1 : 0, modes[2]);
                 case SEQ -> poke(params[2], (peek(params[0], modes[0]) == peek(params[1], modes[1])) ? 1 : 0, modes[2]);
                 case RELBASE -> this.relbase += peek(params[0], modes[0]);
-                case HALT -> { halted = true; if (debugging) System.out.println("bye"); }
+                case HALT -> {
+                    halted = true;
+                    if (debugging) System.out.println("bye");
+                }
                 default -> throw new RuntimeException("Unknown opcode");
             }
             if (debugging) {
                 for (int i = 0; i < mem.length; i++) {
-                    if (state[i] != mem[i]) System.out.printf("State of %d has changed from %d to %d.", i, state[i], mem[i]);
+                    if (state[i] != mem[i])
+                        System.out.printf("State of %d has changed from %d to %d.", i, state[i], mem[i]);
                 }
-                if (relbasestate != relbase) System.out.printf("Relative base has changed from %d to %d.", relbasestate, relbase);
+                if (relbasestate != relbase)
+                    System.out.printf("Relative base has changed from %d to %d.", relbasestate, relbase);
                 if (pcstate != pc) System.out.printf("Program counter has changed from %d to %d.", pcstate, pc);
                 System.out.println();
             }
@@ -133,9 +144,15 @@ public class IntCodeMachine {
 
     public long peek(long param, int mode) {
         switch (mode) {
-            case 0 -> { return mem[(int) param]; }
-            case 1 -> { return param; }
-            case 2 -> { return mem[(int) (relbase + param)]; }
+            case 0 -> {
+                return mem[(int) param];
+            }
+            case 1 -> {
+                return param;
+            }
+            case 2 -> {
+                return mem[(int) (relbase + param)];
+            }
             default -> throw new RuntimeException("Unknown address mode");
         }
     }
@@ -160,8 +177,15 @@ public class IntCodeMachine {
 
     public void halt() {
         halted = true;
-        if (threadPool != null) {
-            threadPool.shutdownNow();
+        if (executor != null) {
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executor.shutdownNow();
+            }
         }
     }
 
