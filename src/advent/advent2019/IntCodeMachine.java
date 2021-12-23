@@ -3,6 +3,10 @@ package advent.advent2019;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class IntCodeMachine {
@@ -37,7 +41,7 @@ public class IntCodeMachine {
     private final String name;
     private final long[] code;
     private IODevice ioDevice;
-
+    private ExecutorService threadPool;
 
     private boolean debugging;
     private long[] mem;
@@ -52,7 +56,13 @@ public class IntCodeMachine {
         reset();
     }
 
+    public void executeThreaded() {
+        threadPool = Executors.newSingleThreadExecutor();
+        threadPool.execute(this::execute);
+    }
+
     public IntCodeMachine execute() {
+        Thread.currentThread().setName("IntCodeMachine[" + name + "]");
         while (!halted) {
             int opcode = (int) mem[pc];
             if (!INSTRUCTIONS.containsKey(opcode % 100)) {
@@ -73,7 +83,7 @@ public class IntCodeMachine {
                 params[i] = mem[pc + i + 1];
                 modes[i] = Integer.parseInt(String.valueOf(flags.charAt(2 - i)));
             }
-            if (debugging) System.out.printf("%s: %04d %02d %-7s %s [%s] -> ", name, pc, ins.operation, ins.name, flags,
+            if (debugging) System.out.printf("%s: %04d %02d %-7s %s [%s] -> ", Thread.currentThread().getName(), pc, ins.operation, ins.name, flags,
                     Arrays.stream(params).mapToObj(String::valueOf).collect(Collectors.joining(",")));
             long[] state = Arrays.copyOf(mem, mem.length);
             int pcstate = pc;
@@ -81,13 +91,16 @@ public class IntCodeMachine {
             switch (ins.operation) {
                 case ADD -> poke(params[2], peek(params[0], modes[0]) + peek(params[1], modes[1]), modes[2]);
                 case MUL -> poke(params[2], peek(params[0], modes[0]) * peek(params[1], modes[1]), modes[2]);
-                case INPUT -> poke(params[0], ioDevice.output(), modes[0]);
+                case INPUT -> {
+                    long input = ioDevice.output();
+                    if (debugging) System.out.printf("Storing input of %d to %d", input, params[0]);
+                    poke(params[0], input, modes[0]); }
                 case OUTPUT -> {
                     long output = peek(params[0], modes[0]);
-                    if (debugging) System.out.printf("OUTPUT: %s", name, output);
+                    if (debugging) System.out.printf("OUTPUT: %s", output);
                     ioDevice.input(output);
                     pc += ins.numParams + 1;
-                    return this;
+                    //return this;
                 }
                 case JNZ -> { if (peek(params[0], modes[0]) != 0) pc = (int) peek(params[1], modes[1]); }
                 case JZ -> { if (peek(params[0], modes[0]) == 0) pc = (int) peek(params[1], modes[1]); }
@@ -145,6 +158,13 @@ public class IntCodeMachine {
         return halted;
     }
 
+    public void halt() {
+        halted = true;
+        if (threadPool != null) {
+            threadPool.shutdownNow();
+        }
+    }
+
     public void setDebugging(boolean debugging) {
         this.debugging = debugging;
     }
@@ -156,7 +176,6 @@ public class IntCodeMachine {
         halted = false;
         ioDevice.reset();
     }
-
 
     static record Instruction(String name, int operation, int numParams) {
     }
