@@ -4,43 +4,38 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class BlockingIOQueue implements IODevice {
-    final Deque<Long> inputQueue;
-    final Deque<Long> outputQueue;
+    final Deque<Long> queue;
     boolean debugging = false;
 
     public BlockingIOQueue() {
-        this.inputQueue = new ArrayDeque<>();
-        this.outputQueue = new ArrayDeque<>();
+        this.queue = new ArrayDeque<>();
     }
 
     @Override
     public synchronized void input(long input) {
         if (debugging) System.out.printf("%s has sent the input %d%n", Thread.currentThread().getName(), input);
-        while (!inputQueue.isEmpty()) {
-            waitForNotify();
-        }
-        inputQueue.addLast(input);
+        queue.add(input);
         notifyAll();
     }
 
     @Override
     public synchronized long output() {
         if (debugging) System.out.printf("%s has requested output%n", Thread.currentThread().getName());
-        while (outputQueue.isEmpty()) {
+        while (queue.isEmpty()) {
             waitForNotify();
         }
         notifyAll();
-        if (debugging) System.out.printf("Sending output to %s: %d %n", Thread.currentThread().getName(), outputQueue.peek());
-        return outputQueue.pop();
+        if (debugging) System.out.printf("Sending output to %s: %d %n", Thread.currentThread().getName(), queue.peek());
+        return queue.remove();
     }
 
     public synchronized long waitForOutput(long direction) {
-        outputQueue.addLast(direction);
+        queue.addLast(direction);
         notifyAll();
-        while (inputQueue.isEmpty()) {
+        while (queue.isEmpty()) {
             waitForNotify();
         }
-        return inputQueue.pop();
+        return queue.remove();
     }
 
     private void waitForNotify() {
@@ -53,8 +48,7 @@ public class BlockingIOQueue implements IODevice {
 
     @Override
     public void reset() {
-        inputQueue.clear();
-        outputQueue.clear();
+        queue.clear();
     }
 
     @Override

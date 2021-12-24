@@ -94,15 +94,15 @@ public class IntCodeMachine {
                 case MUL -> poke(params[2], peek(params[0], modes[0]) * peek(params[1], modes[1]), modes[2]);
                 case INPUT -> {
                     long input = ioDevice.output();
-                    if (debugging) System.out.printf("Storing input of %d to %d", input, params[0]);
+                    if (debugging) System.out.printf("Storing input of %d to %d. ", input, params[0]);
                     poke(params[0], input, modes[0]);
                 }
                 case OUTPUT -> {
                     long output = peek(params[0], modes[0]);
-                    if (debugging) System.out.printf("OUTPUT: %s", output);
+                    if (debugging) System.out.printf("OUTPUT: %s.", output);
                     ioDevice.input(output);
                     pc += ins.numParams + 1;
-                    //return this;
+                    if (executor == null) return this;
                 }
                 case JNZ -> {
                     if (peek(params[0], modes[0]) != 0) pc = (int) peek(params[1], modes[1]);
@@ -122,11 +122,11 @@ public class IntCodeMachine {
             if (debugging) {
                 for (int i = 0; i < mem.length; i++) {
                     if (state[i] != mem[i])
-                        System.out.printf("State of %d has changed from %d to %d.", i, state[i], mem[i]);
+                        System.out.printf("State of %d has changed from %d to %d. ", i, state[i], mem[i]);
                 }
                 if (relbasestate != relbase)
-                    System.out.printf("Relative base has changed from %d to %d.", relbasestate, relbase);
-                if (pcstate != pc) System.out.printf("Program counter has changed from %d to %d.", pcstate, pc);
+                    System.out.printf("Relative base has changed from %d to %d. ", relbasestate, relbase);
+                if (pcstate != pc) System.out.printf("Program counter has changed from %d to %d. ", pcstate, pc);
                 System.out.println();
             }
             if (pcstate == pc) pc += ins.numParams + 1;
