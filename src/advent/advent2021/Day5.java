@@ -1,4 +1,4 @@
-package advent;
+package advent.advent2021;
 
 import advent.util.IOUtil;
 
@@ -7,7 +7,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 
-public class Vents {
+public class Day5 {
     
     List<Vent> vents = new ArrayList<>();
     int[][] diagram;
@@ -91,7 +91,7 @@ public class Vents {
     }
     
     public static void main(String[] args) {
-        Vents vents = new Vents();
-        vents.vents();
+        Day5 day5 = new Day5();
+        day5.vents();
     }
 }

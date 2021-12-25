@@ -1,4 +1,4 @@
-package advent;
+package advent.advent2021;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Folding {
+public class Day13 {
 
     public void folding(String inputFile) throws IOException {
         List<String> input = Files.lines(Paths.get(inputFile)).collect(Collectors.toList());
@@ -61,8 +61,8 @@ public class Folding {
     }
 
     public static void main(String[] args) throws IOException {
-        Folding folding = new Folding();
-        folding.folding("./data/folding.txt");
+        Day13 folding = new Day13();
+        folding.folding("./data/2021/folding.txt");
     }
 
 }

@@ -1,4 +1,4 @@
-package advent;
+package advent.advent2021;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -88,7 +88,7 @@ public class Day21 {
 
     public static void main(String[] args) throws IOException {
         Day21 solver = new Day21();
-        List<String> lines = Files.lines(Paths.get("./data/day21.txt")).collect(Collectors.toList());
+        List<String> lines = Files.lines(Paths.get("./data/2021/day21.txt")).collect(Collectors.toList());
         long start = System.currentTimeMillis();
         solver.solve(lines);
         System.out.printf("Done after %d millis%n", System.currentTimeMillis() - start);

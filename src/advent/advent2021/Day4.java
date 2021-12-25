@@ -1,4 +1,4 @@
-package advent;
+package advent.advent2021;
 
 import advent.util.IOUtil;
 import advent.util.TriConsumer;
@@ -9,7 +9,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 
-public class Bingo {
+public class Day4 {
     List<Board> boards = new ArrayList<>();
     int[] numbers;
     
@@ -113,7 +113,7 @@ public class Bingo {
     }
     
     public static void main(String[] args) {
-        Bingo bingo = new Bingo();
+        Day4 bingo = new Day4();
         bingo.bingo();
     }
     

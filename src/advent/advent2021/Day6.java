@@ -1,8 +1,7 @@
-package advent;
+package advent.advent2021;
 
 import advent.util.Counter;
 import advent.util.HashCounter;
-import advent.util.IOUtil;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,7 +11,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
-public class Lanterns {
+public class Day6 {
     
     public void lanterns(String fileName) throws IOException {
         List<String> input = Files.lines(Paths.get(fileName)).collect(Collectors.toList());
@@ -38,8 +37,8 @@ public class Lanterns {
     }
 
     public static void main(String[] args) throws IOException {
-        Lanterns lanterns = new Lanterns();
-        lanterns.lanterns("./data/lantern.txt");
+        Day6 day6 = new Day6();
+        day6.lanterns("./data/2021/lantern.txt");
     }
 
 

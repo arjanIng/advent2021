@@ -1,4 +1,4 @@
-package advent;
+package advent.advent2021;
 
 import advent.util.IOUtil;
 
@@ -7,7 +7,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 
-public class Crabs {
+public class Day7 {
     
     List<Integer> positions = new ArrayList<>();
     
@@ -42,7 +42,7 @@ public class Crabs {
     }
 
     public static void main(String[] args) {
-        Crabs crabs = new Crabs();
+        Day7 crabs = new Day7();
         crabs.crabs();
     }
 }

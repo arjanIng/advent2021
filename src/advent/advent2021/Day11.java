@@ -1,4 +1,4 @@
-package advent;
+package advent.advent2021;
 
 import advent.util.Grid;
 import advent.util.Pos;
@@ -6,7 +6,7 @@ import advent.util.Pos;
 import java.io.IOException;
 import java.util.Stack;
 
-public class OctopusStreams {
+public class Day11 {
 
     public void octopus(String inputFile) throws IOException {
         Grid<Integer> grid = new Grid<>();
@@ -45,8 +45,8 @@ public class OctopusStreams {
     }
 
     public static void main(String[] args) throws IOException {
-        OctopusStreams lava = new OctopusStreams();
-        lava.octopus("./data/octopus.txt");
+        Day11 lava = new Day11();
+        lava.octopus("./data/2021/octopus.txt");
     }
 
 }

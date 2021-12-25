@@ -1,6 +1,4 @@
-package advent;
-
-import advent.util.IOUtil;
+package advent.advent2021;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,10 +34,10 @@ import java.util.stream.Collectors;
  * 5: 9
  * 6: 7
  */
-public class Signal {
+public class Day8 {
     
     public void signal() throws IOException {
-        List<String> input = Files.lines(Paths.get("./data/signal.txt")).collect(Collectors.toList());
+        List<String> input = Files.lines(Paths.get("./data/2021/signal.txt")).collect(Collectors.toList());
 
         List<Integer> signatures = Arrays.asList(42, 17, 34, 39, 30, 37, 41, 25, 49, 45);
         long total = 0;
@@ -62,8 +60,8 @@ public class Signal {
     }
     
     public static void main(String[] args) throws IOException {
-        Signal signal = new Signal();
-        signal.signal();
+        Day8 day8 = new Day8();
+        day8.signal();
     }
 
 }

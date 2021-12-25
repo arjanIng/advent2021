@@ -12,7 +12,7 @@ public class IOUtil {
     
     public static List<String> getResourceBody(String filename) {
         try {
-            return Files.lines(Paths.get("./data/" + filename)).collect(Collectors.toList());
+            return Files.lines(Paths.get("./data/2021/" + filename)).collect(Collectors.toList());
         } catch (IOException e) {
             e.printStackTrace();
         }

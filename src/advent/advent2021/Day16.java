@@ -1,4 +1,4 @@
-package advent;
+package advent.advent2021;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -79,7 +79,7 @@ public class Day16 {
 
     public static void main(String[] args) throws IOException {
         Day16 day16 = new Day16();
-        day16.day16("./data/day16.txt");
+        day16.day16("./data/2021/day16.txt");
     }
 
 }

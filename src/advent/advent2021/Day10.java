@@ -1,4 +1,4 @@
-package advent;
+package advent.advent2021;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Syntax {
+public class Day10 {
 
     public void syntax(String inputFile) throws IOException {
         List<String> input = Files.lines(Paths.get(inputFile))
@@ -61,8 +61,8 @@ public class Syntax {
     }
 
     public static void main(String[] args) throws IOException {
-        Syntax lava = new Syntax();
-        lava.syntax("./data/syntax.txt");
+        Day10 lava = new Day10();
+        lava.syntax("./data/2021/syntax.txt");
     }
 
 }

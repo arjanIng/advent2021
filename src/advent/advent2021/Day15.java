@@ -1,4 +1,4 @@
-package advent;
+package advent.advent2021;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -60,8 +60,8 @@ public class Day15 {
     public static void main(String[] args) throws IOException {
         Day15 day15 = new Day15();
         long start = System.currentTimeMillis();
-        System.out.println("Part 1: " + day15.day15("./data/day15.txt", 1));
-        System.out.println("Part 2: " + day15.day15("./data/day15.txt", 5));
+        System.out.println("Part 1: " + day15.day15("./data/2021/day15.txt", 1));
+        System.out.println("Part 2: " + day15.day15("./data/2021/day15.txt", 5));
         System.out.println("Done in " + (System.currentTimeMillis() - start));
     }
 

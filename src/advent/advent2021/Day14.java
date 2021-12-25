@@ -1,4 +1,4 @@
-package advent;
+package advent.advent2021;
 
 import advent.util.Counter;
 import advent.util.HashCounter;
@@ -7,14 +7,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-public class Polymer {
+public class Day14 {
 
     public void octopus(String inputFile) throws IOException {
         List<String> input = Files.lines(Paths.get(inputFile)).collect(Collectors.toList());
@@ -56,8 +51,8 @@ public class Polymer {
     }
 
     public static void main(String[] args) throws IOException {
-        Polymer lava = new Polymer();
-        lava.octopus("./data/polymer.txt");
+        Day14 lava = new Day14();
+        lava.octopus("./data/2021/polymer.txt");
     }
 
 }

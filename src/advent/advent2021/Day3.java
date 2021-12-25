@@ -1,4 +1,4 @@
-package advent;
+package advent.advent2021;
 
 import advent.util.IOUtil;
 
@@ -8,7 +8,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 
-public class Power {
+public class Day3 {
 
     int[] zeros;
     int[] ones;
@@ -77,7 +77,7 @@ public class Power {
     }
     
     public static void main(String[] args) {
-        Power power = new Power();
+        Day3 power = new Day3();
         power.power();
     }
 

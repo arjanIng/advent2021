@@ -1,16 +1,13 @@
-package advent;
+package advent.advent2021;
 
 import advent.util.Grid;
 import advent.util.Pos;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
-public class LavaStreams {
+public class Day9 {
 
     public void lava(String inputFile) throws IOException {
         Grid<Integer> grid = new Grid<>();
@@ -45,8 +42,8 @@ public class LavaStreams {
     }
 
     public static void main(String[] args) throws IOException {
-        LavaStreams lava = new LavaStreams();
-        lava.lava("./data/lava.txt");
+        Day9 lava = new Day9();
+        lava.lava("./data/2021/lava.txt");
     }
 
 }

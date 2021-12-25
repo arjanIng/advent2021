@@ -1,12 +1,9 @@
-package advent;
+package advent.advent2021;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class Day17 {
@@ -56,7 +53,7 @@ public class Day17 {
 
     public static void main(String[] args) throws IOException {
         Day17 day17 = new Day17();
-        List<String> lines = Files.lines(Paths.get("./data/day17alter.txt")).collect(Collectors.toList());
+        List<String> lines = Files.lines(Paths.get("./data/2021/day17alter.txt")).collect(Collectors.toList());
         long start = System.currentTimeMillis();
         day17.day17(lines);
         System.out.printf("Done after %d millis%n", System.currentTimeMillis() - start);

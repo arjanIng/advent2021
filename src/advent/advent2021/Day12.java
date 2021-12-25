@@ -1,4 +1,4 @@
-package advent;
+package advent.advent2021;
 
 import advent.util.Graph;
 import advent.util.Node;
@@ -10,12 +10,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Collections.addAll;
-
 /**
  * UGLY
  */
-public class Caves {
+public class Day12 {
     Map<String, Cave> caves = new HashMap<>();
 
     public void caves(String fileName) throws IOException {
@@ -128,8 +126,8 @@ public class Caves {
     }
     
     public static void main(String[] args) throws IOException {
-        Caves caves = new Caves();
-        caves.caves("./data/caves.txt");
+        Day12 caves = new Day12();
+        caves.caves("./data/2021/caves.txt");
     }
 
 }

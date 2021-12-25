@@ -1,4 +1,4 @@
-package advent;
+package advent.advent2021;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,7 +21,6 @@ public class Day25 {
         boolean moving = true;
         int step = 0;
         while (moving) {
-            System.out.println("step " + step);
             moving = step(map, '>', new int[]{0, 1});
             moving |= step(map, 'v', new int[]{1, 0});
             step++;
@@ -56,7 +55,7 @@ public class Day25 {
 
     public static void main(String[] args) throws IOException {
         Day25 solver = new Day25();
-        List<String> lines = Files.lines(Paths.get("./data/day25.txt")).collect(Collectors.toList());
+        List<String> lines = Files.lines(Paths.get("./data/2021/day25.txt")).collect(Collectors.toList());
         long start = System.currentTimeMillis();
         solver.solve(lines);
         System.out.printf("Done after %d millis%n", System.currentTimeMillis() - start);

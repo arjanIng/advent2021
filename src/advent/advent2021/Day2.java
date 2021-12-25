@@ -1,4 +1,4 @@
-package advent;
+package advent.advent2021;
 
 import advent.util.IOUtil;
 
@@ -6,7 +6,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 
-public class SubMove {
+public class Day2 {
     
     int pos = 0;
     int aim = 0;
@@ -39,8 +39,8 @@ public class SubMove {
     }
     
     public static void main(String[] args) {
-        SubMove subMove = new SubMove();
-        subMove.subMove();
+        Day2 day2 = new Day2();
+        day2.subMove();
     } 
     
 }
