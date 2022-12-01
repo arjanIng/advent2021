@@ -12,24 +12,16 @@ public class Day1 {
 
     public void solve(List<String> lines) {
         List<Integer> elfcalories = new ArrayList<>();
-
-        int currentElf = 0;
         elfcalories.add(0);
-        for (String line : lines) {
-            if (line.isEmpty()) {
-                currentElf++;
+        lines.forEach(l -> {
+            if (l.isEmpty()) {
                 elfcalories.add(0);
             } else {
-                elfcalories.set(currentElf, elfcalories.get(currentElf) + Integer.parseInt(line));
+                elfcalories.set(elfcalories.size() - 1, elfcalories.get(elfcalories.size() - 1) + Integer.parseInt(l));
             }
-        }
+        });
 
-        int maxCal = -1;
-        for (Integer elfCalory : elfcalories) {
-            if (elfCalory > maxCal) maxCal = elfCalory;
-        }
-
-        System.out.println("part 1: " + maxCal);
+        System.out.println("part 1: " + elfcalories.stream().max(Comparator.comparingInt(a -> a)).get());
 
         List<Integer> sorted = elfcalories.stream().sorted(Comparator.comparingInt(a -> -a)).toList();
 
