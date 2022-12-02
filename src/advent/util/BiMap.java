@@ -1,4 +1,4 @@
-package advent.advent2022.util;
+package advent.util;
 
 import java.util.HashMap;
 import java.util.Map;

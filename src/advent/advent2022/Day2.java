@@ -1,6 +1,6 @@
 package advent.advent2022;
 
-import advent.advent2022.util.BiMap;
+import advent.util.BiMap;
 
 import java.io.IOException;
 import java.nio.file.Files;
