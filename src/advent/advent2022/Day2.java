@@ -1,5 +1,7 @@
 package advent.advent2022;
 
+import advent.advent2022.util.BiMap;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -12,7 +14,7 @@ public class Day2 {
     private static Map<String, String> COLUMN_A = new HashMap<>();
     private static Map<String, String> COLUMN_B = new HashMap<>();
     private static Map<String, Integer> SHAPE_SCORE = new HashMap<>();
-    private static Map<String, String> WIN_CONDITION = new HashMap<>();
+    private static BiMap<String, String> WIN_CONDITION = new BiMap<>();
 
     static {
         COLUMN_A.put("A", "R");
@@ -32,13 +34,6 @@ public class Day2 {
         WIN_CONDITION.put("S", "R");
     }
 
-    private String loseCondition(String challenge) {
-        for (String key : WIN_CONDITION.keySet()) {
-            if (WIN_CONDITION.get(key).equals(challenge)) return key;
-        }
-        throw new RuntimeException("Key not found");
-    }
-
     public void solve(List<String> lines) {
         int total = 0;
         int total2 = 0;
@@ -49,7 +44,7 @@ public class Day2 {
 
             total += calcScore(challenge, response);
 
-            if ("X".equals(parts[1])) response = loseCondition(challenge);
+            if ("X".equals(parts[1])) response = WIN_CONDITION.reverse().get(challenge);
             if ("Y".equals(parts[1])) response = challenge;
             if ("Z".equals(parts[1])) response = WIN_CONDITION.get(challenge);
 
