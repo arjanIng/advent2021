@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class Hash {
 
     public void hash() throws NoSuchAlgorithmException {
-        String seed = "ckczppom";
+        String seed = "yzbqklnj";
 
         MessageDigest md = MessageDigest.getInstance("MD5");
         
@@ -27,7 +27,7 @@ public class Hash {
                 result2 = i;
                 if (result1 != 0) break;
             } else if (result.toString().startsWith("00000")) {
-                result1 = i;
+                if (result1 == 0) result1 = i;
                 if (result2 != 0) break;
             }
             i++;

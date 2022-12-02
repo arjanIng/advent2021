@@ -13,7 +13,8 @@ public class Lights {
         List<String> input = Files.lines(Paths.get(inputFile))
                 .collect(Collectors.toList());
 
-        int[][] lights = new int[1000][1000];
+        boolean[][] lights1 = new boolean[1000][1000];
+        int[][] lights2 = new int[1000][1000];
         for (String line : input) {
             String command;
             if (line.startsWith("turn")) {
@@ -29,16 +30,23 @@ public class Lights {
             for (int x = co1[0]; x <= co2[0]; x++) {
                 for (int y = co1[1]; y <= co2[1]; y++) {
                     switch (command) {
-                        case "turn on" -> lights[x][y]++;
-                        case "turn off" -> lights[x][y] = lights[x][y] > 0 ? lights[x][y] - 1 : lights[x][y];
-                        case "toggle" -> lights[x][y] += 2;
+                        case "turn on" -> { lights2[x][y]++; lights1[x][y] = true; }
+                        case "turn off" -> { lights2[x][y] = lights2[x][y] > 0 ? lights2[x][y] - 1 : lights2[x][y]; lights1[x][y] = false; }
+                        case "toggle" -> { lights2[x][y] += 2; lights1[x][y] = !lights1[x][y]; }
                     }
                 }
             }
         }
 
-        long bright = Arrays.stream(lights).map(line -> Arrays.stream(line).reduce(0, Integer::sum)).reduce(0, Integer::sum);
-//        System.out.printf("Part 1: %d%n", numOn);
+        long numOn = 0;
+        for (int x = 0; x < 1000; x++) {
+            for (int y = 0; y < 1000; y++) {
+                if (lights1[x][y]) numOn++;
+            }
+        }
+
+        long bright = Arrays.stream(lights2).map(line -> Arrays.stream(line).reduce(0, Integer::sum)).reduce(0, Integer::sum);
+        System.out.printf("Part 1: %d%n", numOn);
         System.out.printf("Part 2: %d%n", bright);
     }
 

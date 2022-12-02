@@ -21,7 +21,7 @@ public class Day1 {
             }
         });
 
-        System.out.println("part 1: " + elfcalories.stream().max(Comparator.comparingInt(a -> a)).get());
+        System.out.println("part 1: " + elfcalories.stream().max(Comparator.comparingInt(a -> a)).orElseThrow());
 
         List<Integer> sorted = elfcalories.stream().sorted(Comparator.comparingInt(a -> -a)).toList();
 
