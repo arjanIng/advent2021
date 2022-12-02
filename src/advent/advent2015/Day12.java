@@ -1,7 +1,5 @@
 package advent.advent2015;
 
-import advent.advent2022.Day1;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -29,7 +27,9 @@ public class Day12 {
         out.println("Part 2: " + calcTotal(line2));
     }
 
-    enum Type { OBJECT, ARRAY, VALUE };
+    enum Type {OBJECT, ARRAY, VALUE}
+
+    ;
 
     class Node {
         String value;
@@ -47,14 +47,6 @@ public class Day12 {
 
                 type = Type.VALUE;
             }
-        }
-    }
-
-    private Node constructTree(String input) {
-        if (input.charAt(0) == '{') {
-            Node node = new Node(input.substring(1, input.length() - 2));
-            node.type = Type.OBJECT;
-
         }
     }
 
