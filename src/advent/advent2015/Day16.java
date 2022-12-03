@@ -9,49 +9,48 @@ import java.util.stream.Collectors;
 import static java.lang.System.out;
 
 public class Day16 {
-    Map<String, Map<String, Integer>> sues = new HashMap<>();
+    List<Integer> containers = new ArrayList<>();
+    int numSolutions = 0;
+    int minContainers = Integer.MAX_VALUE;
+    int numMinSolutions = 0;
 
     public void solve(List<String> input) {
         for (String line : input) {
-            String[] parts = line.split(":" , 2);
-            String name = parts[0];
-
-            Map<String, Integer> properties = new HashMap<>();
-
-            String[] fields = parts[1].split(", ");
-            for (String field : fields) {
-                String[] namevalue = field.split(": ");
-                properties.put(namevalue[0].trim(), Integer.parseInt(namevalue[1]));
-            }
-            sues.put(name, properties);
+            containers.add(Integer.parseInt(line));
         }
 
-        for (String name : sues.keySet()) {
-            Map<String, Integer> properties = sues.get(name);
-            boolean correct = true;
-            for (Map.Entry<String, Integer> prop: properties.entrySet()) {
-                switch(prop.getKey()) {
-                    case "children" -> { if (prop.getValue() != 3) correct = false; }
-                    case "cats" -> { if (prop.getValue() <= 7) correct = false; }
-                    case "samoyeds" -> { if (prop.getValue() != 2) correct = false; }
-                    case "pomeranians" -> { if (prop.getValue() >= 3) correct = false; }
-                    case "akitas" -> { if (prop.getValue() != 0) correct = false; }
-                    case "vizslas" -> { if (prop.getValue() != 0) correct = false; }
-                    case "goldfish" -> { if (prop.getValue() >= 5) correct = false; }
-                    case "trees" -> { if (prop.getValue() <= 3) correct = false; }
-                    case "cars" -> { if (prop.getValue() != 2) correct = false; }
-                    case "perfumes" -> { if (prop.getValue() != 1) correct = false; }
-                }
-            }
-            if (correct) out.println("Match found: " + name);
-        }
+        permutate(150, Collections.emptyList(), new int[containers.size()], 0);;
 
-        out.println("Part 1: " + sues);
+        out.println("Part 1: " + numSolutions);
+        out.println("Part 2: " + numMinSolutions);
+    }
+
+    public void permutate(int eggnog, List<Integer> history, int[] index, int level) {
+        if (eggnog == 0) {
+            numSolutions++;
+            if (history.size() < minContainers) {
+                minContainers = history.size();
+                numMinSolutions = 0;
+            }
+            if (history.size() == minContainers) {
+                numMinSolutions++;
+            }
+        } else {
+            int start = level == 0 ? 0 : index[level - 1] + 1;
+            for (int i = start; i < containers.size(); i++) {
+                List<Integer> newHistory = new ArrayList<>(history);
+                newHistory.add(containers.get(i));
+                int[] newIndex = Arrays.copyOf(index, index.length);
+                newIndex[level] = i;
+
+                permutate(eggnog - containers.get(i), newHistory, newIndex, level + 1);
+            }
+        }
     }
 
     public static void main(String[] args) throws IOException {
         Day16 solver = new Day16();
-        List<String> lines = Files.lines(Paths.get("./data/2015/day16.txt")).collect(Collectors.toList());
+        List<String> lines = Files.lines(Paths.get("./data/2015/day17.txt")).collect(Collectors.toList());
         long start = System.currentTimeMillis();
         System.out.println("Running solver...");
         solver.solve(lines);

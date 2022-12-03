@@ -59,7 +59,7 @@ public class Day17 {
     public static void main(String[] args) throws IOException {
         Day17 solver = new Day17();
 
-        String filename = args.length == 0 ? "./data/2019/day17.txt" : args[0];
+        String filename = args.length == 0 ? "./data/2019/day17.txt.txt" : args[0];
         List<String> lines = Files.lines(Paths.get(filename)).collect(Collectors.toList());
         long start = System.currentTimeMillis();
         solver.solve(lines);
